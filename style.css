@@ -1,0 +1,154 @@
+/* Paleta colores: https://coolors.co/f6f6f6-e8e8e8-333333-990100-b90504 */
+:root {
+    --black: #333333;
+    --dark-red: #990100;
+    --red: #B90504;
+    --gray: #E8E8E8;
+    --white: #F6F6F6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background-color: var(--black);
+    background-image: url(https://images.pexels.com/photos/3178786/pexels-photo-3178786.jpeg?cs=srgb&dl=pexels-andrew-neel-3178786.jpg&fm=jpg);
+}
+
+/* HEADER */
+a,
+button {
+    border: none;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--white);
+    padding: 10px;
+    border-radius: 20px;
+}
+
+button:hover {
+    /* color: var(--dark-red); */
+    background-color: var(--dark-red);
+}
+
+
+header {
+    position: relative;
+    padding: 0 1rem;
+}
+
+nav {
+    width: 100%;
+    height: 60px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+nav>a,
+button {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    margin: 0;
+}
+
+#search-box {
+    all: unset;
+    background-color: var(--white);
+    font-size: 1rem;
+    text-align: center;
+    width: 50%;
+    height: 30px;
+    margin: 0px 10px;
+    flex-grow: 1;
+    border: 2px solid var(--gray);
+    border-radius: 10px;
+    border-inline: 0px;
+}
+
+#search-box:hover {
+    /* transform: scale(1.02); */
+}
+
+#search-button {
+    margin: 0px 10px;
+}
+
+.fa-solid {
+    color: var(--white);
+}
+
+
+.action-button {
+    display: block;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    left: 0px;
+    top: 60px;
+    height: 0px;
+    width: 180px;
+    background-color: rgba(255, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+.dropdown-menu.open {
+    /* adjust as I add more features to side nav */
+    height: 200px;     
+}
+
+ul {
+    color: var(--white);
+    display: flex;
+    margin-top: 20px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+}
+li {
+    list-style: none;
+    display: block;
+    margin: 5px;
+    padding: 15px;
+    margin-left: 0px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+li:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+
+
+/* Desktop */
+/* @media only screen and (min-width: 992px) {
+    .dropdown-menu {
+        display: none;
+    }
+} */
