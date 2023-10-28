@@ -43,17 +43,30 @@ async function mainPageLoad() {
   await printNowPlaying(mainSection);
   await printUpcoming(mainSection);
   //Event listener for clicks on cards
-  mainSection.addEventListener("click", async (event) => {
-    const movieCard = event.target.closest(".movie-card");
-    if (movieCard) {
-      const movieId = movieCard.getAttribute("data-movie-id");
-      if (movieId) {
-        console.log(movieId);
-        await fetchAndDisplayMovieDetails(movieId);
-      }
-    }
-  });
+  listenForClicks();
+//   mainSection.addEventListener("click", async (event) => {
+//     const movieCard = event.target.closest(".movie-card");
+//     if (movieCard) {
+//       const movieId = movieCard.getAttribute("data-movie-id");
+//       if (movieId) {
+//         console.log(movieId);
+//         await fetchAndDisplayMovieDetails(movieId);
+//       }
+//     }
+//   });
   //   adjustFontSizeToText();
+}
+function listenForClicks() {
+    mainSection.addEventListener("click", async (event) => {
+        const movieCard = event.target.closest(".movie-card");
+        if (movieCard) {
+          const movieId = movieCard.getAttribute("data-movie-id");
+          if (movieId) {
+            console.log(movieId);
+            await fetchAndDisplayMovieDetails(movieId);
+          }
+        }
+      });
 }
 async function printMostPopular(mainSection) {
   await fetch(
@@ -211,6 +224,7 @@ async function searchMovies(search) {
     mainSection.innerHTML += movieCardContainerHTML;
     })
     .catch((err) => console.error(err));
+    listenForClicks();
 }
 //Event listener for Search Button
 document.getElementById("search-button").addEventListener("click", (event) => {
