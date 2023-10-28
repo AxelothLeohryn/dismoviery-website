@@ -136,7 +136,8 @@ async function printUpcoming(mainSection) {
 }
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
-  movieDetails.innerHTML = '';
+  //Show details window
+  movieDetails.innerHTML = "";
   movieDetails.style.removeProperty("display");
   movieDetails.style.display = "flex";
 
@@ -155,8 +156,14 @@ async function fetchAndDisplayMovieDetails(id) {
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response.results.reverse()[0].key);
-      movieTrailerKey = response.results.reverse()[0].key;
+        //Get youtube trailer id key
+      console.log(response.results.reverse());
+      response.results.forEach(video => {
+        if (video.type == 'Trailer') {
+            movieTrailerKey = video.key;
+        }
+      })
+    //   movieTrailerKey = response.results.reverse()[0].key;  NOT ALWAYS TRAILER
     })
     .catch((err) => console.error(err));
 
@@ -167,20 +174,33 @@ async function fetchAndDisplayMovieDetails(id) {
     .then((response) => response.json())
     .then((response) => {
       console.log(response);
+      //Get movie genres
+      let movieGenres = '';
+      response.genres.forEach(genre => movieGenres += `<div class='genre-tag'>${genre.name}</div>`);
+      console.log(movieGenres);
+
       movieDetails.innerHTML = `
-      <div id="movie-details-nav">
-                  <i id="movie-details-fav" class="fa-solid fa-star"></i>
-                  <i id="movie-details-watchlater" class="fa-solid fa-clock"></i>
-                  <i id="movie-details-close" class="fa-solid fa-xmark"></i>
-              </div>
-      <div id="movie-details-container">
-                <div id="movie-details-title">${response.title}</div>
-                <div id="movie-details-main">
-                    <iframe id="movie-details-trailer" src="https://www.youtube.com/embed/${movieTrailerKey}">
-                    </iframe>
-                    <div id="movie-details-overview">${response.overview}</div>
+        <div id="movie-details-nav">
+            <i id="movie-details-fav" class="fa-solid fa-star"></i>
+            <i id="movie-details-watchlater" class="fa-solid fa-clock"></i>
+            <i id="movie-details-close" class="fa-solid fa-xmark"></i>
+        </div>
+        <div id="movie-details-container">
+            <div id="movie-details-title">${response.title}</div>
+            <div id="movie-details-main">
+                <iframe id="movie-details-trailer" src="https://www.youtube.com/embed/${movieTrailerKey}">
+                </iframe>
+                <div id="movie-details-overview">${response.overview}</div>
+            </div>
+            <div id="movie-details-footer">
+                <div id="movie-details-genres">
+                    ${movieGenres}
                 </div>
-                <div id="movie-details-footer"></div></div>
+                <div id="movie-details-date">
+                    ${response.release_date}
+                </div>
+            </div>
+        </div>
         `;
       movieDetails.style.backgroundImage = `url(https://image.tmdb.org/t/p/w1280${response.backdrop_path})`;
     })
@@ -191,6 +211,7 @@ async function fetchAndDisplayMovieDetails(id) {
       event.preventDefault();
       movieDetails.style.removeProperty("display");
       movieDetails.style.display = "none";
+      movieDetails.innerHTML = ""; //fix youtube video playing in background
     });
 }
 

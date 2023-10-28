@@ -44,7 +44,7 @@ button:hover {
 header {
     position: sticky;
     top: 0px;
-    z-index: 1;
+    z-index: 5;
     padding: 0 1rem;
     backdrop-filter: blur(10px);
     box-shadow: 2px 2px 1px black;
@@ -114,7 +114,9 @@ button {
     top: 60px;
     height: 0px;
     width: 180px;
-    z-index: 2;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
     background-color: rgba(239, 0, 0, 0.9);
     backdrop-filter: blur(5px);
     box-shadow: 5px 5px 5px black;
@@ -124,13 +126,14 @@ button {
 }
 .dropdown-menu.open {
     /* adjust as I add more features to side nav */
-    height: 200px;     
+    height: 450px;     
 }
 
 ul {
     color: var(--white);
     display: flex;
     margin-top: 20px;
+    margin-bottom: 20px;
     height: 100%;
     flex-direction: column;
     justify-content: flex-start;
@@ -195,18 +198,18 @@ li:hover {
     margin-top: 10px;
 }
 
-/*Movie Details*/
+/*Movie Details--------------------------------------------------------------------------*/
 #movie-details {
     position: fixed;
     top: 80px;
     left: 0px;
-    z-index: 5;
+    z-index: 2;
     display: none; /*display: none by default, flex when clicked with script*/
     flex-direction: column;
     background-color: #333333;
     background-size: cover;
     background-position: center;
-    padding: 20px;
+    padding: 7px;
     margin: 10px;
     border: 2px solid black;
     border-radius: 20px;
@@ -215,12 +218,12 @@ li:hover {
 #movie-details-nav {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 15px;
     margin-bottom: 10px;
 }
 #movie-details-nav * {
     cursor: pointer;
-    backdrop-filter: brightness(0.2) blur(20px);
+    backdrop-filter: brightness(0.2) blur(10px);
     padding: 10px 10%;
     border-radius: 20px;
     box-shadow: 1px 1px 1px black;
@@ -238,7 +241,7 @@ li:hover {
 } */
 #movie-details-container {
     backdrop-filter: brightness(0.2) blur(2px);
-    padding: 10px;
+    padding: 20px;
     border-radius: 20px;
 }
 
@@ -260,6 +263,32 @@ li:hover {
 #movie-details-overview {
     color: var(--gray);
     margin: 5px;
+}
+#movie-details-footer {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+}
+#movie-details-genres {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.genre-tag {
+    border: 2px solid white;
+    border-radius: 40px;
+    color: white;
+    padding: 8px;
+    font-size: 0.8rem;
+}
+#movie-details-date {
+    color: #8d8d8d;
+    font-weight: bolder;
+    font-style: italic;
+    text-wrap: nowrap;
 }
 
 /* Desktop */
