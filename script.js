@@ -11,8 +11,20 @@ firebase.initializeApp(firebaseConfig); // Inicializaar app Firebase
 const db = firebase.firestore(); // db representa mi BBDD //inicia Firestore
 //#endregion
 
+//Main section is where cards will be displayed
+const mainSection = document.getElementById("main-section");
+let moviesData = [];
+//options needed for fetch requests:
+const options = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
+  },
+};
+
 //#region Mobile nav
-// Mobile Nav
 const toggleButton = document.getElementById("toggle-button");
 const dropDownMenu = document.getElementById("dropdown-menu");
 const toggleButtonIcon = document.getElementById("toggle-button-icon");
@@ -24,109 +36,37 @@ toggleButton.addEventListener("click", (event) => {
     : "fa-solid fa-bars";
 });
 //#endregion
-//Main section is where cards will be displayed
-const mainSection = document.getElementById("main-section");
-//options needed for fetch requests:
-const options = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
-  },
-};
-//#region Main Page
-//Display de Main Page
 
-async function mainPageLoad() {
-  await printMostPopular(mainSection);
-  await printNowPlaying(mainSection);
-  await printUpcoming(mainSection);
-  //Event listener for clicks on cards
-  listenForClicks();
-//   mainSection.addEventListener("click", async (event) => {
-//     const movieCard = event.target.closest(".movie-card");
-//     if (movieCard) {
-//       const movieId = movieCard.getAttribute("data-movie-id");
-//       if (movieId) {
-//         console.log(movieId);
-//         await fetchAndDisplayMovieDetails(movieId);
-//       }
-//     }
-//   });
-  //   adjustFontSizeToText();
+//#region Main Page
+function printMovieCards(moviesData) {
+  let movieCardContainerHTML = `<section class="movie-card-container">`;
+  moviesData.forEach((movie) => {
+    if (movie.poster_path) {
+      movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
+                <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
+                <h3 class="dynamic-font-size">${movie.title}</h3>
+            </section>`;
+    } else {
+      movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" alt="Poster Image">
+                <h3 class="dynamic-font-size">${movie.title}</h3>
+            </section>`;
+    }
+  });
+  movieCardContainerHTML += `</section>`;
+  mainSection.innerHTML += movieCardContainerHTML;
 }
 function listenForClicks() {
-    mainSection.addEventListener("click", async (event) => {
-        const movieCard = event.target.closest(".movie-card");
-        if (movieCard) {
-          const movieId = movieCard.getAttribute("data-movie-id");
-          if (movieId) {
-            console.log(movieId);
-            await fetchAndDisplayMovieDetails(movieId);
-          }
-        }
-      });
-}
-async function printMostPopular(mainSection) {
-  await fetch(
-    "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      let movieCardContainerHTML = `<span class="category-title">Most Popular</span><section class="movie-card-container">`;
-      response.results.forEach((movie) => {
-        movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-                    <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-                    <h3 class="dynamic-font-size">${movie.title}</h3>
-                </section>`;
-      });
-      movieCardContainerHTML += `</section>`;
-      mainSection.innerHTML += movieCardContainerHTML;
-    })
-    .catch((err) => console.error(err));
-}
-async function printNowPlaying(mainSection) {
-  await fetch(
-    "https://api.themoviedb.org/3/trending/movie/day?language=en-US",
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      let movieCardContainerHTML = `<span class="category-title">Now Playing</span><section class="movie-card-container">`;
-      response.results.forEach((movie) => {
-        movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-                    <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-                    <h3 class="dynamic-font-size">${movie.title}</h3>
-                </section>`;
-      });
-      movieCardContainerHTML += `</section>`;
-      mainSection.innerHTML += movieCardContainerHTML;
-    })
-    .catch((err) => console.error(err));
-}
-async function printUpcoming(mainSection) {
-  await fetch(
-    "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      let movieCardContainerHTML = `<span class="category-title">Upcoming</span><section class="movie-card-container">`;
-      response.results.forEach((movie) => {
-        movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-                    <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-                    <h3 class="dynamic-font-size">${movie.title}</h3>
-                </section>`;
-      });
-      movieCardContainerHTML += `</section>`;
-      mainSection.innerHTML += movieCardContainerHTML;
-    })
-    .catch((err) => console.error(err));
+  mainSection.addEventListener("click", async (event) => {
+    const movieCard = event.target.closest(".movie-card");
+    if (movieCard) {
+      const movieId = movieCard.getAttribute("data-movie-id");
+      if (movieId) {
+        console.log(movieId);
+        await fetchAndDisplayMovieDetails(movieId);
+      }
+    }
+  });
 }
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
@@ -181,15 +121,15 @@ async function fetchAndDisplayMovieDetails(id) {
                 <div id="movie-details-overview">${response.overview}</div>
             </div>
             <div id="movie-details-footer">
-                <div id="movie-details-genres">
-                    ${movieGenres}
-                </div>
-                <div id="movie-details-date">
-                    ${response.release_date}
-                </div>
+            <div id="movie-details-genres">
+            ${movieGenres}
             </div>
-        </div>
-        `;
+            <div id="movie-details-date">
+            ${response.release_date}
+                </div>
+                </div>
+                </div>
+                `;
       movieDetails.style.backgroundImage = `url(https://image.tmdb.org/t/p/w1280${response.backdrop_path})`;
     })
     .catch((err) => console.error(err));
@@ -202,30 +142,133 @@ async function fetchAndDisplayMovieDetails(id) {
       movieDetails.innerHTML = ""; //fix youtube video playing in background
     });
 }
-mainPageLoad();
-
-async function searchMovies(search) {
-  mainSection.innerHTML = "<h1>Results</h1>"; //Prepopulate with "Results:" and "Sort By:" sections
+async function printMostPopular() {
   await fetch(
-    `https://api.themoviedb.org/3/search/movie?query=${search}&include_adult=false&language=en-US&page=1`,
+    "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
     options
   )
     .then((response) => response.json())
     .then((response) => {
-        console.log(response);
-        let movieCardContainerHTML = `<section class="movie-card-container">`;
-        response.results.forEach(movie => {
-            movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-            <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-            <h3 class="dynamic-font-size">${movie.title}</h3>
-        </section>`;
-    })
-    movieCardContainerHTML += `</section>`;
-    mainSection.innerHTML += movieCardContainerHTML;
+      console.log(response);
+      moviesData = response.results;
+      mainSection.innerHTML += `<span class="category-title">Most Popular</span><section class="movie-card-container">`;
+      printMovieCards(moviesData);
+      mainSection.innerHTML += `</section>`;
     })
     .catch((err) => console.error(err));
-    listenForClicks();
 }
+async function printNowPlaying() {
+  await fetch(
+    "https://api.themoviedb.org/3/trending/movie/day?language=en-US",
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      moviesData = response.results;
+      mainSection.innerHTML += `<span class="category-title">Now Playing</span><section class="movie-card-container">`;
+      printMovieCards(moviesData);
+      mainSection.innerHTML += `</section>`;
+    })
+    .catch((err) => console.error(err));
+}
+async function printUpcoming() {
+  await fetch(
+    "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      let moviesData = response.results;
+      mainSection.innerHTML += `<span class="category-title">Upcoming</span><section class="movie-card-container">`;
+      printMovieCards(moviesData);
+      mainSection.innerHTML += `</section>`;
+    })
+    .catch((err) => console.error(err));
+}
+function hideSearchFilters() {
+  const searchFilters = document.getElementById("search-results");
+  searchFilters.style.removeProperty("display");
+  searchFilters.style.display = "none";
+}
+function showSearchFilters() {
+  const searchFilters = document.getElementById("search-results");
+  searchFilters.style.removeProperty("display");
+  searchFilters.style.display = "flex";
+}
+async function mainPageLoad() {
+  hideSearchFilters();
+  await printMostPopular();
+  await printNowPlaying();
+  await printUpcoming();
+  //Event listener for clicks on cards
+  listenForClicks();
+}
+mainPageLoad();
+//#endregion
+
+//#region Search
+function sortByDateDesc(moviesData) {
+  moviesData.sort((a, b) => {
+    const dateA = new Date(a.release_date);
+    const dateB = new Date(b.release_date);
+    return dateB - dateA;
+  });
+}
+function sortByDateAsc(moviesData) {
+  moviesData.sort((a, b) => {
+    const dateA = new Date(a.release_date);
+    const dateB = new Date(b.release_date);
+    return dateA - dateB;
+  });
+}
+function sortByPopularityDesc(moviesData) {
+  moviesData.sort((a, b) => {
+    return b.popularity - a.popularity;
+  });
+}
+function sortByPopularityAsc(moviesData) {
+  moviesData.sort((a, b) => {
+    return a.popularity - b.popularity;
+  });
+}
+async function searchMovies(search) {
+  mainSection.innerHTML = "";
+  document.getElementById('sort-results').selectedIndex = 0; //Selected Popularity as default each time user searches
+  moviesData = [];
+  showSearchFilters();
+  //We are gonna search page by page (each page = 20 results) until no more results
+  let searchResultsLength = 0;
+  let page = 1;
+  while (true) {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/movie?query=${search}&include_adult=false&language=en-US&page=${page}`,
+      options
+    );
+
+    if (!response.ok) {
+      console.error(`Error fetching data: ${response.status}`);
+      break;
+    }
+
+    const data = await response.json();
+    moviesData.push(...data.results);
+    searchResultsLength = data.results.length;
+    page++;
+
+    if (searchResultsLength === 0) {
+      break; // No more results to fetch
+    }
+  }
+
+  //Sort by popularity date by default
+  sortByPopularityDesc(moviesData);
+  console.log(moviesData);
+  printMovieCards(moviesData);
+  listenForClicks();
+}
+
 //Event listener for Search Button
 document.getElementById("search-button").addEventListener("click", (event) => {
   event.preventDefault();
@@ -234,22 +277,38 @@ document.getElementById("search-button").addEventListener("click", (event) => {
     searchMovies(event.target.form[0].value);
   } else console.log("Please search something");
 });
+let sortSelect = document.getElementById("sort-results");
+sortSelect.addEventListener("change", () => {
+  const selectedSort = sortSelect.value;
+  switch (selectedSort) {
+    case "release-date-desc":
+      sortByDateDesc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    case "release-date-asc":
+      sortByDateAsc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+      
+    case "popularity-desc":
+      sortByPopularityDesc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    case "popularity-asc":
+      sortByPopularityAsc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    default:
+      // Handle any other cases or provide a default action
+      break;
+  }
+});
 
 //#endregion
-
-// function adjustFontSizeToText() {
-//     const movieCards = document.querySelectorAll(".movie-card");
-
-//     movieCards.forEach(movieCard => {
-//         const h3 = movieCard.querySelector("h3.dynamic-font-size");
-//         const containerHeight = movieCard.offsetHeight  - 216;
-//         const textHeight = h3.scrollHeight;
-//         console.log(containerHeight, textHeight)
-
-//         if (textHeight > containerHeight) {
-//             const fontSize = (containerHeight / textHeight) * parseFloat(getComputedStyle(h3).fontSize);
-//             // const fontSize = 3
-//             h3.style.fontSize = fontSize + "px";
-//         }
-//     });
-// }
