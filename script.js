@@ -11,8 +11,20 @@ firebase.initializeApp(firebaseConfig); // Inicializaar app Firebase
 const db = firebase.firestore(); // db representa mi BBDD //inicia Firestore
 //#endregion
 
+//Main section is where cards will be displayed
+const mainSection = document.getElementById("main-section");
+let moviesData = [];
+//options needed for fetch requests:
+const options = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
+  },
+};
+
 //#region Mobile nav
-// Mobile Nav
 const toggleButton = document.getElementById("toggle-button");
 const dropDownMenu = document.getElementById("dropdown-menu");
 const toggleButtonIcon = document.getElementById("toggle-button-icon");
@@ -26,13 +38,25 @@ toggleButton.addEventListener("click", (event) => {
 //#endregion
 
 //#region Main Page
-//Display de Main Page
-
-async function mainPageLoad() {
-  const mainSection = document.getElementById("main-section");
-  await printMostPopular(mainSection);
-  await printNowPlaying(mainSection);
-  await printUpcoming(mainSection);
+function printMovieCards(moviesData) {
+  let movieCardContainerHTML = `<section class="movie-card-container">`;
+  moviesData.forEach((movie) => {
+    if (movie.poster_path) {
+      movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
+                <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
+                <h3 class="dynamic-font-size">${movie.title}</h3>
+            </section>`;
+    } else {
+      movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" alt="Poster Image">
+                <h3 class="dynamic-font-size">${movie.title}</h3>
+            </section>`;
+    }
+  });
+  movieCardContainerHTML += `</section>`;
+  mainSection.innerHTML += movieCardContainerHTML;
+}
+function listenForClicks() {
   mainSection.addEventListener("click", async (event) => {
     const movieCard = event.target.closest(".movie-card");
     if (movieCard) {
@@ -43,120 +67,29 @@ async function mainPageLoad() {
       }
     }
   });
-  //   adjustFontSizeToText();
-}
-
-async function printMostPopular(mainSection) {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
-    },
-  };
-
-  await fetch(
-    "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      let movieCardContainerHTML = `<span class="category-title">Most Popular</span><section class="movie-card-container">`;
-      response.results.forEach((movie) => {
-        movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-                    <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-                    <h3 class="dynamic-font-size">${movie.title}</h3>
-                </section>`;
-      });
-      movieCardContainerHTML += `</section>`;
-      mainSection.innerHTML += movieCardContainerHTML;
-    })
-    .catch((err) => console.error(err));
-}
-
-async function printNowPlaying(mainSection) {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
-    },
-  };
-
-  await fetch(
-    "https://api.themoviedb.org/3/trending/movie/day?language=en-US",
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      let movieCardContainerHTML = `<span class="category-title">Now Playing</span><section class="movie-card-container">`;
-      response.results.forEach((movie) => {
-        movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-                    <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-                    <h3 class="dynamic-font-size">${movie.title}</h3>
-                </section>`;
-      });
-      movieCardContainerHTML += `</section>`;
-      mainSection.innerHTML += movieCardContainerHTML;
-    })
-    .catch((err) => console.error(err));
-}
-async function printUpcoming(mainSection) {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
-    },
-  };
-
-  await fetch(
-    "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
-    options
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      let movieCardContainerHTML = `<span class="category-title">Upcoming</span><section class="movie-card-container">`;
-      response.results.forEach((movie) => {
-        movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
-                    <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
-                    <h3 class="dynamic-font-size">${movie.title}</h3>
-                </section>`;
-      });
-      movieCardContainerHTML += `</section>`;
-      mainSection.innerHTML += movieCardContainerHTML;
-    })
-    .catch((err) => console.error(err));
 }
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
-  movieDetails.innerHTML = '';
+  //Show details window
+  movieDetails.innerHTML = "";
   movieDetails.style.removeProperty("display");
   movieDetails.style.display = "flex";
 
   let movieTrailerKey = "";
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
-    },
-  };
   await fetch(
     `https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`,
     options
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response.results.reverse()[0].key);
-      movieTrailerKey = response.results.reverse()[0].key;
+      //Get youtube trailer id key
+      console.log(response.results.reverse());
+      response.results.forEach((video) => {
+        if (video.type == "Trailer") {
+          movieTrailerKey = video.key;
+        }
+      });
+      //   movieTrailerKey = response.results.reverse()[0].key;  NOT ALWAYS TRAILER
     })
     .catch((err) => console.error(err));
 
@@ -167,21 +100,36 @@ async function fetchAndDisplayMovieDetails(id) {
     .then((response) => response.json())
     .then((response) => {
       console.log(response);
+      //Get movie genres
+      let movieGenres = "";
+      response.genres.forEach(
+        (genre) => (movieGenres += `<div class='genre-tag'>${genre.name}</div>`)
+      );
+      console.log(movieGenres);
+
       movieDetails.innerHTML = `
-      <div id="movie-details-nav">
-                  <i id="movie-details-fav" class="fa-solid fa-star"></i>
-                  <i id="movie-details-watchlater" class="fa-solid fa-clock"></i>
-                  <i id="movie-details-close" class="fa-solid fa-xmark"></i>
-              </div>
-      <div id="movie-details-container">
-                <div id="movie-details-title">${response.title}</div>
-                <div id="movie-details-main">
-                    <iframe id="movie-details-trailer" src="https://www.youtube.com/embed/${movieTrailerKey}">
-                    </iframe>
-                    <div id="movie-details-overview">${response.overview}</div>
+        <div id="movie-details-nav">
+            <i id="movie-details-fav" class="fa-solid fa-star"></i>
+            <i id="movie-details-watchlater" class="fa-solid fa-clock"></i>
+            <i id="movie-details-close" class="fa-solid fa-xmark"></i>
+        </div>
+        <div id="movie-details-container">
+            <div id="movie-details-title">${response.title}</div>
+            <div id="movie-details-main">
+                <iframe id="movie-details-trailer" src="https://www.youtube.com/embed/${movieTrailerKey}">
+                </iframe>
+                <div id="movie-details-overview">${response.overview}</div>
+            </div>
+            <div id="movie-details-footer">
+            <div id="movie-details-genres">
+            ${movieGenres}
+            </div>
+            <div id="movie-details-date">
+            ${response.release_date}
                 </div>
-                <div id="movie-details-footer"></div></div>
-        `;
+                </div>
+                </div>
+                `;
       movieDetails.style.backgroundImage = `url(https://image.tmdb.org/t/p/w1280${response.backdrop_path})`;
     })
     .catch((err) => console.error(err));
@@ -191,26 +139,176 @@ async function fetchAndDisplayMovieDetails(id) {
       event.preventDefault();
       movieDetails.style.removeProperty("display");
       movieDetails.style.display = "none";
+      movieDetails.innerHTML = ""; //fix youtube video playing in background
     });
 }
-
+async function printMostPopular() {
+  await fetch(
+    "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      moviesData = response.results;
+      mainSection.innerHTML += `<span class="category-title">Most Popular</span><section class="movie-card-container">`;
+      printMovieCards(moviesData);
+      mainSection.innerHTML += `</section>`;
+    })
+    .catch((err) => console.error(err));
+}
+async function printNowPlaying() {
+  await fetch(
+    "https://api.themoviedb.org/3/trending/movie/day?language=en-US",
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      moviesData = response.results;
+      mainSection.innerHTML += `<span class="category-title">Now Playing</span><section class="movie-card-container">`;
+      printMovieCards(moviesData);
+      mainSection.innerHTML += `</section>`;
+    })
+    .catch((err) => console.error(err));
+}
+async function printUpcoming() {
+  await fetch(
+    "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      let moviesData = response.results;
+      mainSection.innerHTML += `<span class="category-title">Upcoming</span><section class="movie-card-container">`;
+      printMovieCards(moviesData);
+      mainSection.innerHTML += `</section>`;
+    })
+    .catch((err) => console.error(err));
+}
+function hideSearchFilters() {
+  const searchFilters = document.getElementById("search-results");
+  searchFilters.style.removeProperty("display");
+  searchFilters.style.display = "none";
+}
+function showSearchFilters() {
+  const searchFilters = document.getElementById("search-results");
+  searchFilters.style.removeProperty("display");
+  searchFilters.style.display = "flex";
+}
+async function mainPageLoad() {
+  hideSearchFilters();
+  await printMostPopular();
+  await printNowPlaying();
+  await printUpcoming();
+  //Event listener for clicks on cards
+  listenForClicks();
+}
 mainPageLoad();
-
 //#endregion
 
-// function adjustFontSizeToText() {
-//     const movieCards = document.querySelectorAll(".movie-card");
+//#region Search
+function sortByDateDesc(moviesData) {
+  moviesData.sort((a, b) => {
+    const dateA = new Date(a.release_date);
+    const dateB = new Date(b.release_date);
+    return dateB - dateA;
+  });
+}
+function sortByDateAsc(moviesData) {
+  moviesData.sort((a, b) => {
+    const dateA = new Date(a.release_date);
+    const dateB = new Date(b.release_date);
+    return dateA - dateB;
+  });
+}
+function sortByPopularityDesc(moviesData) {
+  moviesData.sort((a, b) => {
+    return b.popularity - a.popularity;
+  });
+}
+function sortByPopularityAsc(moviesData) {
+  moviesData.sort((a, b) => {
+    return a.popularity - b.popularity;
+  });
+}
+async function searchMovies(search) {
+  mainSection.innerHTML = "";
+  document.getElementById('sort-results').selectedIndex = 0; //Selected Popularity as default each time user searches
+  moviesData = [];
+  showSearchFilters();
+  //We are gonna search page by page (each page = 20 results) until no more results
+  let searchResultsLength = 0;
+  let page = 1;
+  while (true) {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/movie?query=${search}&include_adult=false&language=en-US&page=${page}`,
+      options
+    );
 
-//     movieCards.forEach(movieCard => {
-//         const h3 = movieCard.querySelector("h3.dynamic-font-size");
-//         const containerHeight = movieCard.offsetHeight  - 216;
-//         const textHeight = h3.scrollHeight;
-//         console.log(containerHeight, textHeight)
+    if (!response.ok) {
+      console.error(`Error fetching data: ${response.status}`);
+      break;
+    }
 
-//         if (textHeight > containerHeight) {
-//             const fontSize = (containerHeight / textHeight) * parseFloat(getComputedStyle(h3).fontSize);
-//             // const fontSize = 3
-//             h3.style.fontSize = fontSize + "px";
-//         }
-//     });
-// }
+    const data = await response.json();
+    moviesData.push(...data.results);
+    searchResultsLength = data.results.length;
+    page++;
+
+    if (searchResultsLength === 0) {
+      break; // No more results to fetch
+    }
+  }
+
+  //Sort by popularity date by default
+  sortByPopularityDesc(moviesData);
+  console.log(moviesData);
+  printMovieCards(moviesData);
+  listenForClicks();
+}
+
+//Event listener for Search Button
+document.getElementById("search-button").addEventListener("click", (event) => {
+  event.preventDefault();
+  console.log(event.target.form[0].value);
+  if (event.target.form[0].value) {
+    searchMovies(event.target.form[0].value);
+  } else console.log("Please search something");
+});
+let sortSelect = document.getElementById("sort-results");
+sortSelect.addEventListener("change", () => {
+  const selectedSort = sortSelect.value;
+  switch (selectedSort) {
+    case "release-date-desc":
+      sortByDateDesc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    case "release-date-asc":
+      sortByDateAsc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+      
+    case "popularity-desc":
+      sortByPopularityDesc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    case "popularity-asc":
+      sortByPopularityAsc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    default:
+      // Handle any other cases or provide a default action
+      break;
+  }
+});
+
+//#endregion
