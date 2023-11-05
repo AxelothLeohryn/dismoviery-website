@@ -151,7 +151,7 @@ async function printMostPopular() {
     .then((response) => {
       console.log(response);
       moviesData = response.results;
-      mainSection.innerHTML += `<span class="category-title">Most Popular</span><section class="movie-card-container">`;
+      mainSection.innerHTML += `<span id="most-popular" class="category-title">Most Popular</span><section class="movie-card-container">`;
       printMovieCards(moviesData);
       mainSection.innerHTML += `</section>`;
     })
@@ -166,7 +166,7 @@ async function printNowPlaying() {
     .then((response) => {
       console.log(response);
       moviesData = response.results;
-      mainSection.innerHTML += `<span class="category-title">Now Playing</span><section class="movie-card-container">`;
+      mainSection.innerHTML += `<span id="now-playing" class="category-title">Now Playing</span><section class="movie-card-container">`;
       printMovieCards(moviesData);
       mainSection.innerHTML += `</section>`;
     })
@@ -181,7 +181,7 @@ async function printUpcoming() {
     .then((response) => {
       console.log(response);
       let moviesData = response.results;
-      mainSection.innerHTML += `<span class="category-title">Upcoming</span><section class="movie-card-container">`;
+      mainSection.innerHTML += `<span id="upcoming" class="category-title">Upcoming</span><section class="movie-card-container">`;
       printMovieCards(moviesData);
       mainSection.innerHTML += `</section>`;
     })
@@ -200,6 +200,7 @@ function showSearchFilters() {
 }
 async function mainPageLoad() {
   hideSearchFilters();
+  hideDiscoverFilters();
   await printMostPopular();
   await printNowPlaying();
   await printUpcoming();
@@ -207,6 +208,10 @@ async function mainPageLoad() {
   listenForClicks();
 }
 mainPageLoad();
+document.getElementById('home-button').addEventListener('click', event => {
+  event.preventDefault();
+  mainPageLoad();
+})
 //#endregion
 
 //#region Search
@@ -347,14 +352,12 @@ document
       }
     });
   });
-
-//Function to populate year select dropdown
 function populateYearDropdown() {
   const currentYear = new Date().getFullYear();
-  const startYear = 1900;
+  const startYear = 1950;
   const yearSelect = document.getElementById("year-select");
 
-  for (let year = currentYear; year >= startYear; year--) {
+  for (let year = currentYear + 1; year >= startYear; year--) {
     let option = new Option(year, year);
     yearSelect.add(option);
   }
@@ -368,4 +371,41 @@ function hideDiscoverFilters() {
   const discoverFilters = document.getElementById("discover");
   discoverFilters.style.display = "none";
 }
+
+async function discovery(customUrl) {
+  await fetch(customUrl, options)
+  .then(response => response.json())
+  .then(moviesData => {
+    moviesData = moviesData.results;
+    console.log({'Movies Discovered': moviesData});
+    printMovieCards(moviesData);
+  })
+  .catch(err => console.error(err));
+}
+
+document.getElementById("discover-submit").addEventListener("click", event => {
+  event.preventDefault();
+  console.log(event.target);
+  const genres = Array.from(document.querySelectorAll('#discover-genres-checkboxes input[type=checkbox]:checked'))
+                      .map(checkbox => checkbox.value).join('%7C')
+  const year = document.getElementById('year-select').value;
+  const sortBy = document.getElementById('sort-by-select').value;
+  console.log('Selected Genres:', genres);
+  console.log('Selected Year:', year);
+  console.log('Selected Sorting Option:', sortBy);
+
+  let customUrl = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1';
+  if (sortBy) {
+    customUrl += `&sort_by=${sortBy}`;
+  };
+  if (genres) {
+    customUrl += `&with_genres=${genres}`;
+  }
+  if (year) {
+    customUrl += `&year=${year}`;
+  }
+  console.log({'Custom URL: ': customUrl});
+
+  discovery(customUrl);
+})
 //#endregion
