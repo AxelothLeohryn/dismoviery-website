@@ -21,11 +21,14 @@
             <div id="toggle-button" class="action-button">
                 <i id="toggle-button-icon" class="fa-solid fa-bars"></i>
             </div>
+            <div id="left-nav">
+                <button id="home-button">Home</button>
+                <button id="discover-button">Discover</button>
+            </div>
             <form action="" id="search-bar">
                 <input id="search-box" type="text" placeholder="Search...">
-                <button id="search-button" type="submit">SEARCH</button>
+                <button id="search-button" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
-            <button id="discover-button">DISCOVER</button>
         </nav>
         <nav id="dropdown-menu" class="dropdown-menu">
             <ul id="user-list">
@@ -76,6 +79,110 @@
                 <option value="release-date-desc">Release Date ↓</option>
                 <option value="release-date-asc">Release Date ↑</option>
             </select>
+        </section>
+        <section id="discover">
+            <h2 id="discover-text">Discover new movies</h2>
+            <form id="discover-form">
+                <div id="discover-filter-options">
+                    <button id="select-genres-btn">Select Genres</button>
+                    <select name="year" id="year-select">
+                        <option value="">Any year</option>
+                        <!-- JavaScript will populate the year options here -->
+                    </select>
+                    <select name="sort_by" id="sort-by-select">
+                        <option value="popularity.desc">Popularity ↓</option>
+                        <option value="popularity.asc">Popularity ↑</option>
+                        <option value="revenue.desc">Revenue ↓</option>
+                        <option value="revenue.asc">Revenue ↑</option>
+                        <option value="primary_release_date.desc">Release Date ↓</option>
+                        <option value="primary_release_date.asc">Release Date ↑</option>
+                        <option value="vote_average.desc">Vote Average ↓</option>
+                        <option value="vote_average.asc">Vote Average ↑</option>
+                    </select>
+                </div>
+                <div id="discover-genres-window">
+                    <div id="discover-genres-checkboxes">
+                        <div>
+                            <input type="checkbox" id="genre-28" name="genre" value="28">
+                            <label for="genre-28">Action</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-12" name="genre" value="12">
+                            <label for="genre-12">Adventure</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-16" name="genre" value="16">
+                            <label for="genre-16">Animation</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-35" name="genre" value="35">
+                            <label for="genre-35">Comedy</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-80" name="genre" value="80">
+                            <label for="genre-80">Crime</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-99" name="genre" value="99">
+                            <label for="genre-99">Documentary</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-18" name="genre" value="18">
+                            <label for="genre-99">Drama</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-10751" name="genre" value="10751">
+                            <label for="genre-99">Family</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-14" name="genre" value="14">
+                            <label for="genre-99">Fantasy</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-36" name="genre" value="36">
+                            <label for="genre-36">History</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-27" name="genre" value="27">
+                            <label for="genre-27">Horror</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-10402" name="genre" value="10402">
+                            <label for="genre-10402">Music</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-9648" name="genre" value="9648">
+                            <label for="genre-9648">Mystery</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-10749" name="genre" value="10749">
+                            <label for="genre-10749">Romance</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-878" name="genre" value="878">
+                            <label for="genre-878">Science Fiction</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-10770" name="genre" value="10770">
+                            <label for="genre-10770">TV Movie</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-53" name="genre" value="53">
+                            <label for="genre-53">Thriller</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-10752" name="genre" value="10752">
+                            <label for="genre-10752">War</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="genre-37" name="genre" value="37">
+                            <label for="genre-37">Western</label>
+                        </div>
+                    </div>
+                </div>
+                <button id="discover-submit" type="submit" name="submit">Discover</button>
+
+            </form>
         </section>
         <section id="main-section">
             <section class="movie-card-container">
