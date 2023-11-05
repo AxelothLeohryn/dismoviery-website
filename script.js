@@ -1,4 +1,4 @@
-//#region DB initialize
+//#region DB initialize ----------------------------------------------------------------------------------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDWTORxEsRlsSNGXT5_hkivLUC8bj10oHE",
   authDomain: "dismoviery-web.firebaseapp.com",
@@ -11,6 +11,141 @@ firebase.initializeApp(firebaseConfig); // Inicializaar app Firebase
 const db = firebase.firestore(); // db representa mi BBDD //inicia Firestore
 //#endregion
 
+//#region Firebase Login ----------------------------------------------------------------------------------------------------
+const createUser = (user) => {
+  db.collection("users")
+    .add(user)
+    .then((docRef) => console.log("Document written with ID: ", docRef.id))
+    .catch((error) => console.error("Error adding document: ", error));
+};
+const readAllUsers = (born) => {
+  db.collection("users")
+    .where("first", "==", born)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        console.log(doc.data());
+      });
+    });
+};
+function readOne(id) {
+  db.collection("users")
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        console.log("Document data:", doc.data());
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+}
+const signUpUser = (email, password) => {
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      let user = userCredential.user;
+      console.log(`se ha registrado ${user.email} ID:${user.uid}`)
+      alert(`se ha registrado ${user.email}`)
+      // Guarda El usuario en Firestore
+      createUser({
+        id: user.uid,
+        email: user.email
+      });
+
+    })
+    .catch((error) => {
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      console.log(`Error en el sistema (${errorCode}): ${errorMessage}`);
+    });
+};
+document.getElementById("register-form").addEventListener("submit", function (event) {
+  event.preventDefault();
+  let email = event.target.elements.email.value;
+  let pass = event.target.elements.pass.value;
+  let pass2 = event.target.elements.pass2.value;
+  pass === pass2 ? signUpUser(email, pass) : alert("Passwords not matching.");
+})
+const signInUser = (email, password) => {
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      let user = userCredential.user;
+      console.log(`Se ha logado ${user.email} ID:${user.uid}`)
+      alert(`You have logued in: ${user.email}`)
+      console.log("USER", user);
+    })
+    .catch((error) => {
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      console.log(errorCode)
+      console.log(errorMessage)
+    });
+}
+const signOut = () => {
+  let user = firebase.auth().currentUser;
+  firebase.auth().signOut().then(() => {
+    console.log("Sale del sistema: " + user.email)
+  }).catch((error) => {
+    console.log("Hubo un error: " + error);
+  });
+}
+document.getElementById("login-form").addEventListener("submit", function (event) {
+  event.preventDefault();
+  let email = event.target.elements.email2.value;
+  let pass = event.target.elements.pass3.value;
+  signInUser(email, pass)
+})
+document.getElementById("logout-button").addEventListener("click", signOut);
+
+// User listener
+// Control logged in user
+firebase.auth().onAuthStateChanged(function (user) {
+  const userName = document.getElementById('user-list-username');
+  const registerForm = document.getElementById('register-form');
+  const loginForm = document.getElementById('login-form');
+  const logoutButton = document.getElementById('logout-button');
+  if (user) {
+    console.log(`User currently logged in:${user.email} ${user.uid}`);
+    userName.innerHTML = user.email.split('@')[0];
+    registerForm.style.display = 'none';
+    loginForm.style.display = 'none';
+    logoutButton.style.display = 'flex'
+  } else {
+    console.log("No user logged in");
+    userName.innerHTML = `Login`;
+    registerForm.style.display = 'flex';
+    loginForm.style.display = 'flex';
+    logoutButton.style.display = 'none';
+  }
+});
+//#endregion
+
+//#region Login Page ----------------------------------------------------------------------------------------------------
+  const loginPage = document.getElementById('login-section');
+  const loginCloseButton = document.getElementById('close-login-button');
+  loginCloseButton.addEventListener('click', event => {
+    event.preventDefault();
+    loginPage.style.display = "none";
+  })
+
+  const loginButton = document.getElementById('user-list-username');
+  loginButton.addEventListener('click', event => {
+    event.preventDefault();
+    loginPage.style.display = 'flex';
+  })
+
+
+//#endregion
+
+//#region General ----------------------------------------------------------------------------------------------------
 //Main section is where cards will be displayed
 const mainSection = document.getElementById("main-section");
 let moviesData = [];
@@ -23,8 +158,9 @@ const options = {
       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
   },
 };
+//#endregion
 
-//#region Mobile nav
+//#region Mobile nav ----------------------------------------------------------------------------------------------------
 const toggleButton = document.getElementById("toggle-button");
 const dropDownMenu = document.getElementById("dropdown-menu");
 const toggleButtonIcon = document.getElementById("toggle-button-icon");
@@ -37,7 +173,7 @@ toggleButton.addEventListener("click", (event) => {
 });
 //#endregion
 
-//#region Main Page
+//#region Main Page ----------------------------------------------------------------------------------------------------
 function printMovieCards(moviesData) {
   let movieCardContainerHTML = `<section class="movie-card-container">`;
   moviesData.forEach((movie) => {
@@ -215,7 +351,7 @@ document.getElementById('home-button').addEventListener('click', event => {
 })
 //#endregion
 
-//#region Search
+//#region Search ----------------------------------------------------------------------------------------------------
 function sortByDateDesc(moviesData) {
   moviesData.sort((a, b) => {
     const dateA = new Date(a.release_date);
@@ -322,7 +458,7 @@ sortSelect.addEventListener("change", () => {
 
 //#endregion
 
-//#region Discover
+//#region Discover ----------------------------------------------------------------------------------------------------
 
 async function discoverSection() {
   mainSection.innerHTML = "";
