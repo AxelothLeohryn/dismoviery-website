@@ -278,11 +278,12 @@ async function searchMovies(search) {
 }
 
 //Event listener for Search Button
-document.getElementById("search-button").addEventListener("click", (event) => {
+document.getElementById("search-bar").addEventListener("submit", (event) => {
   event.preventDefault();
-  console.log(event.target.parentNode.form[0].value);
-  if (event.target.parentNode.form[0].value) {
-    searchMovies(event.target.parentNode.form[0].value);
+  const searchValue = document.getElementById("search-box").value;
+  console.log(searchValue);
+  if (searchValue) {
+    searchMovies(searchValue);
   } else console.log("Please search something");
 });
 //Search sort
