@@ -199,6 +199,7 @@ function showSearchFilters() {
   searchFilters.style.display = "flex";
 }
 async function mainPageLoad() {
+  mainSection.innerHTML = '';
   hideSearchFilters();
   hideDiscoverFilters();
   await printMostPopular();
@@ -388,7 +389,7 @@ document.getElementById("discover-submit").addEventListener("click", event => {
   event.preventDefault();
   console.log(event.target);
   const genres = Array.from(document.querySelectorAll('#discover-genres-checkboxes input[type=checkbox]:checked'))
-                      .map(checkbox => checkbox.value).join('%7C')
+                      .map(checkbox => checkbox.value).join('%2C%20')
   const year = document.getElementById('year-select').value;
   const sortBy = document.getElementById('sort-by-select').value;
 
