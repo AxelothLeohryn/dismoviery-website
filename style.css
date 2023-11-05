@@ -19,6 +19,10 @@ body {
     background-image: url(https://images.pexels.com/photos/3178786/pexels-photo-3178786.jpeg?cs=srgb&dl=pexels-andrew-neel-3178786.jpg&fm=jpg);
 }
 
+label {
+    color: var(--white);
+}
+
 /* HEADER */
 a,
 button {
@@ -59,7 +63,7 @@ nav {
     justify-content: space-between;
     font-size: 1.2rem;
     font-weight: bold;
-    
+
 }
 
 nav>a,
@@ -124,9 +128,10 @@ button {
     transition: height 0.1s ease-in;
     overflow: hidden;
 }
+
 .dropdown-menu.open {
     /* adjust as I add more features to side nav */
-    height: 450px;     
+    height: 450px;
 }
 
 ul {
@@ -139,6 +144,7 @@ ul {
     justify-content: flex-start;
     text-align: left;
 }
+
 li {
     list-style: none;
     display: block;
@@ -148,6 +154,7 @@ li {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
 }
+
 li:hover {
     background-color: rgba(0, 0, 0, 0.5);
 }
@@ -157,13 +164,15 @@ li:hover {
 #main-section {
     display: flex;
     flex-direction: column;
-    margin: 20px;  
+    margin: 20px;
 }
+
 .movie-card-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
+
 .movie-card {
     height: 280px;
     width: 150px;
@@ -177,16 +186,19 @@ li:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
 }
+
 .movie-card img {
     width: 100%;
 }
+
 .movie-card h3 {
     color: white;
     margin: 2px;
     margin-top: 8px;
 }
+
 .movie-card:hover {
     transform: scale(1.05);
     cursor: pointer;
@@ -204,7 +216,8 @@ li:hover {
     top: 80px;
     left: 0px;
     z-index: 2;
-    display: none; /*display: none by default, flex when clicked with script*/
+    display: none;
+    /*display: none by default, flex when clicked with script*/
     flex-direction: column;
     background-color: #333333;
     background-size: cover;
@@ -215,12 +228,14 @@ li:hover {
     border-radius: 20px;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
+
 #movie-details-nav {
     display: flex;
     justify-content: space-between;
     gap: 15px;
     margin-bottom: 10px;
 }
+
 #movie-details-nav * {
     cursor: pointer;
     backdrop-filter: brightness(0.2) blur(10px);
@@ -228,15 +243,19 @@ li:hover {
     border-radius: 20px;
     box-shadow: 1px 1px 1px black;
 }
+
 #movie-details-nav *:hover {
     transform: scale(1.05);
 }
+
 #movie-details-fav {
     color: rgb(255, 191, 0);
 }
+
 #movie-details-watchlater {
     color: rgb(124, 203, 229);
 }
+
 /* #movie-details-close {
 } */
 #movie-details-container {
@@ -252,6 +271,7 @@ li:hover {
     font-weight: bolder;
     text-shadow: 5px 5px 5px rgba(0, 0, 0, 1);
 }
+
 /* #movie-details-main {
 
 } */
@@ -260,10 +280,15 @@ li:hover {
     border: 1px solid var(--gray);
     margin: 5px;
 }
+
 #movie-details-overview {
     color: var(--gray);
     margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgb(0, 0, 0);
 }
+
 #movie-details-footer {
     margin-top: 15px;
     display: flex;
@@ -271,19 +296,22 @@ li:hover {
     justify-content: space-between;
     align-items: end;
 }
+
 #movie-details-genres {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px;
 }
+
 .genre-tag {
-    border: 2px solid white;
+    border: 2px solid var(--red);
     border-radius: 40px;
     color: white;
     padding: 8px;
     font-size: 0.8rem;
 }
+
 #movie-details-date {
     color: #8d8d8d;
     font-weight: bolder;
@@ -299,12 +327,70 @@ li:hover {
     justify-content: space-evenly;
     align-items: center;
 }
+
 #search-results-text {
     color: white;
 }
+
 label[for="sort-results"] {
     color: white;
 }
+
+
+/*Discover section----------------------------------------------------------------------------*/
+#discover {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#discover h2 {
+    color: var(--white);
+}
+
+#discover-form {
+    display: flex;
+    flex-direction: column;
+}
+#discover-filter-options {
+    display: flex;
+    flex-direction: row;
+}
+#discover-genres-window {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+#discover-genres-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    /* Optional: adds a border around the checkbox area */
+    border-radius: 4px;
+    /* Optional: rounds the corners of the border */
+    background-color: var(--white);
+    /* Optional: color for the checkbox area */
+}
+
+#discover-genres-checkboxes div {
+    display: flex;
+    align-items: center;
+}
+#discover-genres-checkboxes label {
+    color: black;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+
 /* Desktop */
 /* @media only screen and (min-width: 992px) {
     .dropdown-menu {

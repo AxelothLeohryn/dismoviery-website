@@ -187,6 +187,7 @@ async function printUpcoming() {
     })
     .catch((err) => console.error(err));
 }
+//Functions to show and hide Search filters
 function hideSearchFilters() {
   const searchFilters = document.getElementById("search-results");
   searchFilters.style.removeProperty("display");
@@ -235,9 +236,10 @@ function sortByPopularityAsc(moviesData) {
 }
 async function searchMovies(search) {
   mainSection.innerHTML = "";
-  document.getElementById('sort-results').selectedIndex = 0; //Selected Popularity as default each time user searches
+  document.getElementById("sort-results").selectedIndex = 0; //Selected Popularity as default each time user searches
   moviesData = [];
   showSearchFilters();
+  hideDiscoverFilters();
   //We are gonna search page by page (each page = 20 results) until no more results
   let searchResultsLength = 0;
   let page = 1;
@@ -272,11 +274,12 @@ async function searchMovies(search) {
 //Event listener for Search Button
 document.getElementById("search-button").addEventListener("click", (event) => {
   event.preventDefault();
-  console.log(event.target.form[0].value);
-  if (event.target.form[0].value) {
-    searchMovies(event.target.form[0].value);
+  console.log(event.target.parentNode.form[0].value);
+  if (event.target.parentNode.form[0].value) {
+    searchMovies(event.target.parentNode.form[0].value);
   } else console.log("Please search something");
 });
+//Search sort
 let sortSelect = document.getElementById("sort-results");
 sortSelect.addEventListener("change", () => {
   const selectedSort = sortSelect.value;
@@ -292,7 +295,7 @@ sortSelect.addEventListener("change", () => {
       mainSection.innerHTML = "";
       printMovieCards(moviesData);
       break;
-      
+
     case "popularity-desc":
       sortByPopularityDesc(moviesData);
       mainSection.innerHTML = "";
@@ -306,9 +309,63 @@ sortSelect.addEventListener("change", () => {
       break;
 
     default:
-      // Handle any other cases or provide a default action
       break;
   }
 });
 
+//#endregion
+
+//#region Discover
+
+async function discoverSection() {
+  mainSection.innerHTML = "";
+  hideSearchFilters();
+  showDiscoverFilters();
+  populateYearDropdown();
+  document.getElementById("discover").style.display = "flex";
+}
+//Event listener Discover Section Button
+document
+  .getElementById("discover-button")
+  .addEventListener("click", (event) => {
+    event.preventDefault();
+    discoverSection();
+    const genresButton = document.getElementById("select-genres-btn");
+    // When the "Select Genres" button is clicked, show the genres selection
+    genresButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      const genresWindow = document.getElementById("discover-genres-window");
+      if (
+        genresWindow.style.display === "none" ||
+        genresWindow.style.display === ""
+      ) {
+        genresWindow.style.display = "flex";
+        genresButton.innerHTML = "Hide Genres";
+      } else {
+        genresWindow.style.display = "none";
+        genresButton.innerHTML = 'Select Genres';
+      }
+    });
+  });
+
+//Function to populate year select dropdown
+function populateYearDropdown() {
+  const currentYear = new Date().getFullYear();
+  const startYear = 1900;
+  const yearSelect = document.getElementById("year-select");
+
+  for (let year = currentYear; year >= startYear; year--) {
+    let option = new Option(year, year);
+    yearSelect.add(option);
+  }
+}
+//Functions to show and hide Discover filters
+function showDiscoverFilters() {
+  const discoverFilters = document.getElementById("discover");
+  discoverFilters.style.display = "flex";
+}
+function hideDiscoverFilters() {
+  const discoverFilters = document.getElementById("discover");
+  discoverFilters.style.display = "none";
+}
 //#endregion
