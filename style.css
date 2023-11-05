@@ -350,15 +350,18 @@ label[for="sort-results"] {
 }
 #discover h2 {
     color: var(--white);
+    margin: 20px;
 }
 
 #discover-form {
     display: flex;
     flex-direction: column;
+    
 }
 #discover-filter-options {
     display: flex;
     flex-direction: row;
+    gap: 10px;
 }
 #discover-genres-window {
     display: none;

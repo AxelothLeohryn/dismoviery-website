@@ -378,6 +378,7 @@ async function discovery(customUrl) {
   .then(moviesData => {
     moviesData = moviesData.results;
     console.log({'Movies Discovered': moviesData});
+    mainSection.innerHTML = '';
     printMovieCards(moviesData);
   })
   .catch(err => console.error(err));
@@ -390,6 +391,7 @@ document.getElementById("discover-submit").addEventListener("click", event => {
                       .map(checkbox => checkbox.value).join('%7C')
   const year = document.getElementById('year-select').value;
   const sortBy = document.getElementById('sort-by-select').value;
+
   console.log('Selected Genres:', genres);
   console.log('Selected Year:', year);
   console.log('Selected Sorting Option:', sortBy);
