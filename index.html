@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dismoviery</title>
+    <link rel="shortcut icon" href="./assets/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -33,8 +34,8 @@
         <nav id="dropdown-menu" class="dropdown-menu">
             <ul id="user-list">
                 <li id="user-list-username">Login</li>
-                <li id="favorites">Favorites</li>
-                <li id="watch-later">Watch Later</li>
+                <li id="favorites"><i class="fa-solid fa-star"></i>Favorites</li>
+                <li id="watch-later"><i class="fa-solid fa-clock"></i>Watch Later</li>
             </ul>
             <ul id="navigationList">
                 <li id="most-popular-button">Most Popular</li>
@@ -45,6 +46,7 @@
     </header>
     <main>
         <section id="login-section">
+            <img id="logo" src="./assets/logo_t.png" alt="Dismoviery Logo">
             <i id="close-login-button" class="fa-solid fa-xmark"></i>
             <form id="register-form" action="#" method="POST">
                 <h3>Register</h3>
@@ -103,6 +105,8 @@
                 <option value="popularity-asc">Popularity ↑</option>
                 <option value="release-date-desc">Release Date ↓</option>
                 <option value="release-date-asc">Release Date ↑</option>
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
             </select>
         </section>
         <section id="discover">
