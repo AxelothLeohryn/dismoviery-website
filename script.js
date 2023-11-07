@@ -182,31 +182,31 @@ toggleButton.addEventListener("click", (event) => {
     : "fa-solid fa-bars";
 });
 
-const mostPopularButton = document.getElementById('most-popular-button');
-const nowPlayingButton = document.getElementById('now-playing-button');
-const upcomingButton = document.getElementById('upcoming-button');
+const mostPopularButton = document.getElementById("most-popular-button");
+const nowPlayingButton = document.getElementById("now-playing-button");
+const upcomingButton = document.getElementById("upcoming-button");
 
-mostPopularButton.addEventListener('click', event => {
+mostPopularButton.addEventListener("click", (event) => {
   event.preventDefault();
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   hideDiscoverFilters();
   hideSearchFilters();
   printMostPopular();
-})
-nowPlayingButton.addEventListener('click', event => {
+});
+nowPlayingButton.addEventListener("click", (event) => {
   event.preventDefault();
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   hideDiscoverFilters();
-  hideSearchFilters(); 
+  hideSearchFilters();
   printNowPlaying();
-})
-upcomingButton.addEventListener('click', event => {
+});
+upcomingButton.addEventListener("click", (event) => {
   event.preventDefault();
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   hideDiscoverFilters();
   hideSearchFilters();
   printUpcoming();
-})
+});
 //#endregion
 
 //#region Main Page ----------------------------------------------------------------------------------------------------
@@ -244,7 +244,8 @@ function listenForClicks() {
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
   //Show details window
-  movieDetails.innerHTML = "";
+  movieDetails.style.backgroundImage = '';
+  movieDetails.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
   movieDetails.style.removeProperty("display");
   movieDetails.style.display = "flex";
 
@@ -316,7 +317,7 @@ async function fetchAndDisplayMovieDetails(id) {
     movieDetails.style.removeProperty("display");
     movieDetails.style.display = "none";
     movieDetails.innerHTML = ""; //fix youtube video playing in background
-    document.getElementById('movie-details-alert').innerHTML = '';
+    document.getElementById("movie-details-alert").innerHTML = "";
     // document.getElementById('movie-details-alert').style.display =
   });
   const favButton = document.getElementById("movie-details-fav");
@@ -662,7 +663,9 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         }),
       });
       console.log("Movie added to favorites");
-      document.getElementById("movie-details-alert").innerHTML = `${movieTitle} added to Favorites`;
+      document.getElementById(
+        "movie-details-alert"
+      ).innerHTML = `${movieTitle} added to Favorites`;
     } else {
       // If the document does not exist, create a new one
       await userUserlistsRef.set({
@@ -677,7 +680,6 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         watchlater: [], // Assuming watchlater should be empty initially
       });
       console.log("Favorite list created and movie added");
-    
     }
   } catch (error) {
     console.error("Error adding movie to favorites: ", error);
@@ -701,7 +703,9 @@ async function deleteFromFavsUser(
       }),
     });
     console.log("Movie removed from favorites");
-    document.getElementById("movie-details-alert").innerHTML = `${movieTitle} removed from Favorites`;
+    document.getElementById(
+      "movie-details-alert"
+    ).innerHTML = `${movieTitle} removed from Favorites`;
   } catch (error) {
     console.error("Error removing movie from favorites: ", error);
   }
@@ -727,7 +731,9 @@ async function addToWatchlaterUser(
         }),
       });
       console.log("Movie added to watch later");
-      document.getElementById("movie-details-alert").innerHTML = `${movieTitle} added to Watch Later`;
+      document.getElementById(
+        "movie-details-alert"
+      ).innerHTML = `${movieTitle} added to Watch Later`;
     } else {
       // If the document does not exist, create a new one
       await userUserlistsRef.set({
@@ -774,7 +780,9 @@ async function deleteFromWatchlaterUser(
       ],
     });
     console.log("Favorite list created and movie added");
-    document.getElementById("movie-details-alert").innerHTML = `${movieTitle} removed from Watch Later`;
+    document.getElementById(
+      "movie-details-alert"
+    ).innerHTML = `${movieTitle} removed from Watch Later`;
   } catch (error) {
     console.error("Error adding movie to watch later: ", error);
   }
@@ -824,10 +832,14 @@ async function watchLaterSection() {
 
 document.getElementById("favorites").addEventListener("click", (event) => {
   event.preventDefault();
+  hideDiscoverFilters();
+  hideSearchFilters();
   favsSection();
 });
 document.getElementById("watch-later").addEventListener("click", (event) => {
   event.preventDefault();
+  hideDiscoverFilters();
+  hideSearchFilters();
   watchLaterSection();
 });
 
