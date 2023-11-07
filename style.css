@@ -288,6 +288,7 @@ li:hover {
     color: white;
     font-size: 50px;
     margin-top: 10px;
+    text-shadow: 5px 5px 5px #000000;
 }
 
 /*Movie Details--------------------------------------------------------------------------*/
@@ -317,12 +318,14 @@ li:hover {
 #movie-details-alert {
     color: white;
     background-color: black;
+    font-size: 25px !important;
     border-radius: 5px;
     margin: 10px;
     align-items: center;
     text-align: center;
     font-size: larger;
 }
+
 #movie-details-nav {
     width: 100%;
     display: flex;
@@ -503,6 +506,10 @@ input[type="checkbox"] {
     margin-right: 5px;
 }
  /*Login Section--------------------------------------------------------------------------------------------------------*/
+ #logo {
+    width: 200px;
+    border-radius: 50px;
+ }
  #login-section {
     position: fixed;
     display: flex;
@@ -562,7 +569,15 @@ input[type="checkbox"] {
 .display-none {
     display: none;
 }
+.animated {
+    
+}
 
+/* Favorites section -------------------------------------------------------------------------------------------------------- */
+#alert {
+    padding-top: 40px;
+    color: white;
+}
 /* Desktop --------------------------------------------------------------------------------------------------------------- */
 @media only screen and (min-width: 992px) {
     .movie-card {

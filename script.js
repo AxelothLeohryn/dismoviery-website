@@ -204,7 +204,7 @@ function listenForClicks() {
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
   //Blur main section and background
-  mainSection.style.filter = 'blur(2px)';
+  mainSection.style.filter = "blur(2px)";
   //Show details window
   movieDetails.style.backgroundImage = "";
   movieDetails.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
@@ -270,6 +270,7 @@ async function fetchAndDisplayMovieDetails(id) {
                 </div>
                 `;
       movieDetails.style.backgroundImage = `url(https://image.tmdb.org/t/p/w1280${response.backdrop_path})`;
+      document.getElementById("movie-details-alert").innerHTML = ""; //Hide alert for adding to favs/wl
     })
     .catch((err) => console.error(err));
   //Event listeners for the buttons:
@@ -277,11 +278,10 @@ async function fetchAndDisplayMovieDetails(id) {
   const closeButton = document.getElementById("movie-details-close");
   closeButton.addEventListener("click", (event) => {
     event.preventDefault();
-    mainSection.style.filter = 'blur(0px)';
+    mainSection.style.filter = "blur(0px)";
     movieDetails.style.removeProperty("display");
     movieDetails.style.display = "none";
     movieDetails.innerHTML = ""; //fix youtube video playing in background
-    document.getElementById("movie-details-alert").innerHTML = "";
   });
   //Fav Button
   const favButton = document.getElementById("movie-details-fav");
@@ -431,11 +431,13 @@ function showSearchFilters() {
 }
 async function mainPageLoad() {
   mainSection.innerHTML = "";
+  mainSection.style.display = "none";
   hideSearchFilters();
   hideDiscoverFilters();
   await printMostPopular();
   await printNowPlaying();
   await printUpcoming();
+  mainSection.style.display = "flex";
   //Event listener for clicks on cards
   listenForClicks();
 }
@@ -530,7 +532,7 @@ async function searchMovies(search) {
   //Sort by popularity date by default
   sortByPopularityDesc(moviesData);
   console.log(moviesData);
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   printMovieCards(moviesData);
   listenForClicks();
 }
@@ -814,18 +816,6 @@ async function deleteFromWatchlaterUser(
         id: movieId,
       }),
     });
-    await userUserlistsRef.set({
-      username: userLoggedIn,
-      favorites: [],
-      watchlater: [
-        {
-          title: movieTitle,
-          poster_path: moviePoster,
-          id: movieId,
-        },
-      ],
-    });
-    console.log("Favorite list created and movie added");
     document.getElementById(
       "movie-details-alert"
     ).innerHTML = `${movieTitle} removed from Watch Later`;
@@ -833,7 +823,7 @@ async function deleteFromWatchlaterUser(
     console.error("Error adding movie to watch later: ", error);
   }
 }
-async function favsSection() {
+async function displayFavsSection() {
   mainSection.innerHTML = "";
   let favoritesMovies = await db.collection("user-lists").doc(userLoggedIn);
   let favoritesMoviesData = [];
@@ -851,12 +841,16 @@ async function favsSection() {
     .catch((error) => {
       console.log("Error getting document:", error);
     });
-  mainSection.innerHTML += `<span id="most-popular" class="category-title">Your favorite movies:</span><section class="movie-card-container">`;
-  printMovieCards(favoritesMoviesData);
+  mainSection.innerHTML += `<span id="favorites-section" class="category-title">Your favorite movies:</span><section class="movie-card-container">`;
+  if (favoritesMoviesData.length != 0) {
+    printMovieCards(favoritesMoviesData);
+  } else {
+    mainSection.innerHTML += `<h2 id="alert">No favorite movies added yet</h2>`;
+  }
   mainSection.innerHTML += `</section>`;
   console.log(favoritesMoviesData);
 }
-async function watchLaterSection() {
+async function displaywatchLaterSection() {
   mainSection.innerHTML = "";
   let watchLaterMovies = await db.collection("user-lists").doc(userLoggedIn);
   let watchLaterMoviesData = [];
@@ -875,22 +869,26 @@ async function watchLaterSection() {
       console.log("Error getting document:", error);
     });
   mainSection.innerHTML += `<span id="most-popular" class="category-title">Movies to watch later:</span><section class="movie-card-container">`;
-  printMovieCards(watchLaterMoviesData);
+  if (watchLaterMoviesData.length != 0) {
+    printMovieCards(watchLaterMoviesData);
+  } else {
+    mainSection.innerHTML += `<h2 id="alert">No movies added to watch later</h2>`;
+  }
   mainSection.innerHTML += `</section>`;
   console.log(watchLaterMoviesData);
 }
-
+//Navigation buttons to favorites and watch later pages
 document.getElementById("favorites").addEventListener("click", (event) => {
   event.preventDefault();
   hideDiscoverFilters();
   hideSearchFilters();
-  favsSection();
+  displayFavsSection();
 });
 document.getElementById("watch-later").addEventListener("click", (event) => {
   event.preventDefault();
   hideDiscoverFilters();
   hideSearchFilters();
-  watchLaterSection();
+  displaywatchLaterSection();
 });
 
 //#endregion
