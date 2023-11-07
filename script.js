@@ -125,7 +125,7 @@ firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     userLoggedIn = user.email; //Store logged in username
     console.log(`User currently logged in:${user.email} ${user.uid}`);
-    userName.innerHTML = user.email.split("@")[0];
+    userName.innerHTML = `<li id="user-list-username"><i class="fa-solid fa-user"></i>${user.email.split("@")[0]}</li>`;
     registerForm.style.display = "none";
     loginForm.style.display = "none";
     logoutButton.style.display = "flex";
@@ -244,7 +244,7 @@ function listenForClicks() {
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
   //Show details window
-  movieDetails.style.backgroundImage = '';
+  movieDetails.style.backgroundImage = "";
   movieDetails.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
   movieDetails.style.removeProperty("display");
   movieDetails.style.display = "flex";
@@ -805,7 +805,9 @@ async function favsSection() {
     .catch((error) => {
       console.log("Error getting document:", error);
     });
+  mainSection.innerHTML += `<span id="most-popular" class="category-title">Your favorite movies:</span><section class="movie-card-container">`;
   printMovieCards(favoritesMoviesData);
+  mainSection.innerHTML += `</section>`;
   console.log(favoritesMoviesData);
 }
 async function watchLaterSection() {
@@ -826,7 +828,9 @@ async function watchLaterSection() {
     .catch((error) => {
       console.log("Error getting document:", error);
     });
+  mainSection.innerHTML += `<span id="most-popular" class="category-title">Movies to watch later:</span><section class="movie-card-container">`;
   printMovieCards(watchLaterMoviesData);
+  mainSection.innerHTML += `</section>`;
   console.log(watchLaterMoviesData);
 }
 
