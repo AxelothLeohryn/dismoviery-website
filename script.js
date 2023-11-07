@@ -181,6 +181,32 @@ toggleButton.addEventListener("click", (event) => {
     ? "fa-solid fa-xmark"
     : "fa-solid fa-bars";
 });
+
+const mostPopularButton = document.getElementById('most-popular-button');
+const nowPlayingButton = document.getElementById('now-playing-button');
+const upcomingButton = document.getElementById('upcoming-button');
+
+mostPopularButton.addEventListener('click', event => {
+  event.preventDefault();
+  mainSection.innerHTML = '';
+  hideDiscoverFilters();
+  hideSearchFilters();
+  printMostPopular();
+})
+nowPlayingButton.addEventListener('click', event => {
+  event.preventDefault();
+  mainSection.innerHTML = '';
+  hideDiscoverFilters();
+  hideSearchFilters(); 
+  printNowPlaying();
+})
+upcomingButton.addEventListener('click', event => {
+  event.preventDefault();
+  mainSection.innerHTML = '';
+  hideDiscoverFilters();
+  hideSearchFilters();
+  printUpcoming();
+})
 //#endregion
 
 //#region Main Page ----------------------------------------------------------------------------------------------------
@@ -255,9 +281,12 @@ async function fetchAndDisplayMovieDetails(id) {
       console.log(movieGenres);
 
       movieDetails.innerHTML = `
+      <div id="movie-details-alert"></div>
         <div id="movie-details-nav">
             <i id="movie-details-fav" class="fa-solid fa-star" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
+            <i id="movie-details-fav-delete" class="fa-solid fa-star display-none" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
             <i id="movie-details-watchlater" class="fa-solid fa-clock" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
+            <i id="movie-details-watchlater-delete" class="fa-solid fa-clock display-none" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
             <i id="movie-details-close" class="fa-solid fa-xmark" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
         </div>
         <div id="movie-details-container">
@@ -287,8 +316,11 @@ async function fetchAndDisplayMovieDetails(id) {
     movieDetails.style.removeProperty("display");
     movieDetails.style.display = "none";
     movieDetails.innerHTML = ""; //fix youtube video playing in background
+    document.getElementById('movie-details-alert').innerHTML = '';
+    // document.getElementById('movie-details-alert').style.display =
   });
   const favButton = document.getElementById("movie-details-fav");
+  const favButtonDelete = document.getElementById("movie-details-fav-delete");
   favButton.addEventListener("click", (event) => {
     event.preventDefault();
     const title = event.target.getAttribute("data-movie-title");
@@ -296,8 +328,23 @@ async function fetchAndDisplayMovieDetails(id) {
     const id = event.target.getAttribute("data-movie-id");
     console.log("Favorite details: " + userLoggedIn, title, poster, id);
     addToFavsUser(userLoggedIn, title, poster, id);
+    favButton.classList.add("display-none");
+    favButtonDelete.classList.remove("display-none");
+  });
+  favButtonDelete.addEventListener("click", (event) => {
+    event.preventDefault();
+    const title = event.target.getAttribute("data-movie-title");
+    const poster = event.target.getAttribute("data-movie-poster");
+    const id = event.target.getAttribute("data-movie-id");
+    console.log("Favorite details: " + userLoggedIn, title, poster, id);
+    deleteFromFavsUser(userLoggedIn, title, poster, id);
+    favButton.classList.remove("display-none");
+    favButtonDelete.classList.add("display-none");
   });
   const watchLaterButton = document.getElementById("movie-details-watchlater");
+  const watchLaterButtonDelete = document.getElementById(
+    "movie-details-watchlater-delete"
+  );
   watchLaterButton.addEventListener("click", (event) => {
     event.preventDefault();
     const title = event.target.getAttribute("data-movie-title");
@@ -305,6 +352,17 @@ async function fetchAndDisplayMovieDetails(id) {
     const id = event.target.getAttribute("data-movie-id");
     console.log("Watchlater details: " + userLoggedIn, title, poster, id);
     addToWatchlaterUser(userLoggedIn, title, poster, id);
+    watchLaterButton.classList.add("display-none");
+    watchLaterButtonDelete.classList.remove("display-none");
+  });
+  watchLaterButtonDelete.addEventListener("click", (event) => {
+    event.preventDefault();
+    const title = event.target.getAttribute("data-movie-title");
+    const poster = event.target.getAttribute("data-movie-poster");
+    const id = event.target.getAttribute("data-movie-id");
+    deleteFromWatchlaterUser(userLoggedIn, title, poster, id);
+    watchLaterButton.classList.remove("display-none");
+    watchLaterButtonDelete.classList.add("display-none");
   });
 }
 async function printMostPopular() {
@@ -604,6 +662,7 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         }),
       });
       console.log("Movie added to favorites");
+      document.getElementById("movie-details-alert").innerHTML = `${movieTitle} added to Favorites`;
     } else {
       // If the document does not exist, create a new one
       await userUserlistsRef.set({
@@ -611,19 +670,48 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         favorites: [
           {
             title: movieTitle,
-          poster_path: moviePoster,
-          id: movieId,
+            poster_path: moviePoster,
+            id: movieId,
           },
         ],
         watchlater: [], // Assuming watchlater should be empty initially
       });
       console.log("Favorite list created and movie added");
+    
     }
   } catch (error) {
     console.error("Error adding movie to favorites: ", error);
   }
 }
-async function addToWatchlaterUser(userLoggedIn, movieTitle, moviePoster, movieId) {
+async function deleteFromFavsUser(
+  userLoggedIn,
+  movieTitle,
+  moviePoster,
+  movieId
+) {
+  const userUserlistsRef = db.collection("user-lists").doc(userLoggedIn);
+
+  try {
+    const doc = await userUserlistsRef.get();
+    await userUserlistsRef.update({
+      favorites: firebase.firestore.FieldValue.arrayRemove({
+        title: movieTitle,
+        poster_path: moviePoster,
+        id: movieId,
+      }),
+    });
+    console.log("Movie removed from favorites");
+    document.getElementById("movie-details-alert").innerHTML = `${movieTitle} removed from Favorites`;
+  } catch (error) {
+    console.error("Error removing movie from favorites: ", error);
+  }
+}
+async function addToWatchlaterUser(
+  userLoggedIn,
+  movieTitle,
+  moviePoster,
+  movieId
+) {
   const userUserlistsRef = db.collection("user-lists").doc(userLoggedIn);
 
   try {
@@ -638,68 +726,109 @@ async function addToWatchlaterUser(userLoggedIn, movieTitle, moviePoster, movieI
           id: movieId,
         }),
       });
-      console.log("Movie added to favorites");
+      console.log("Movie added to watch later");
+      document.getElementById("movie-details-alert").innerHTML = `${movieTitle} added to Watch Later`;
     } else {
       // If the document does not exist, create a new one
       await userUserlistsRef.set({
         username: userLoggedIn,
         favorites: [],
-        watchlater: [{
-          title: movieTitle,
-          poster_path: moviePoster,
-          id: movieId,
-        }], // Assuming watchlater should be empty initially
+        watchlater: [
+          {
+            title: movieTitle,
+            poster_path: moviePoster,
+            id: movieId,
+          },
+        ], // Assuming watchlater should be empty initially
       });
-      console.log("Favorite list created and movie added");
     }
   } catch (error) {
     console.error("Error adding movie to watch later: ", error);
   }
 }
+async function deleteFromWatchlaterUser(
+  userLoggedIn,
+  movieTitle,
+  moviePoster,
+  movieId
+) {
+  const userUserlistsRef = db.collection("user-lists").doc(userLoggedIn);
+  try {
+    const doc = await userUserlistsRef.get();
+    await userUserlistsRef.update({
+      watchlater: firebase.firestore.FieldValue.arrayRemove({
+        title: movieTitle,
+        poster_path: moviePoster,
+        id: movieId,
+      }),
+    });
+    await userUserlistsRef.set({
+      username: userLoggedIn,
+      favorites: [],
+      watchlater: [
+        {
+          title: movieTitle,
+          poster_path: moviePoster,
+          id: movieId,
+        },
+      ],
+    });
+    console.log("Favorite list created and movie added");
+    document.getElementById("movie-details-alert").innerHTML = `${movieTitle} removed from Watch Later`;
+  } catch (error) {
+    console.error("Error adding movie to watch later: ", error);
+  }
+}
 async function favsSection() {
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   let favoritesMovies = await db.collection("user-lists").doc(userLoggedIn);
-  let favoritesMoviesData = []
-  await favoritesMovies.get().then((doc) => {
-    if (doc.exists) {
+  let favoritesMoviesData = [];
+  await favoritesMovies
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
         console.log("Document data:", doc.data().favorites);
         favoritesMoviesData = doc.data().favorites;
-    } else {
+      } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
-    }
-}).catch((error) => {
-    console.log("Error getting document:", error);
-});
-printMovieCards(favoritesMoviesData);
-console.log(favoritesMoviesData)
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+  printMovieCards(favoritesMoviesData);
+  console.log(favoritesMoviesData);
 }
 async function watchLaterSection() {
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   let watchLaterMovies = await db.collection("user-lists").doc(userLoggedIn);
-  let watchLaterMoviesData = []
-  await watchLaterMovies.get().then((doc) => {
-    if (doc.exists) {
+  let watchLaterMoviesData = [];
+  await watchLaterMovies
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
         console.log("Document data:", doc.data().watchlater);
         watchLaterMoviesData = doc.data().watchlater;
-    } else {
+      } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
-    }
-}).catch((error) => {
-    console.log("Error getting document:", error);
-});
-printMovieCards(watchLaterMoviesData);
-console.log(watchLaterMoviesData)
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+  printMovieCards(watchLaterMoviesData);
+  console.log(watchLaterMoviesData);
 }
 
-document.getElementById('favorites').addEventListener('click', event => {
+document.getElementById("favorites").addEventListener("click", (event) => {
   event.preventDefault();
   favsSection();
-})
-document.getElementById('watch-later').addEventListener('click', event => {
+});
+document.getElementById("watch-later").addEventListener("click", (event) => {
   event.preventDefault();
   watchLaterSection();
-})
+});
 
 //#endregion
