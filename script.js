@@ -51,14 +51,13 @@ const signUpUser = (email, password) => {
     .then((userCredential) => {
       // Signed in
       let user = userCredential.user;
-      console.log(`se ha registrado ${user.email} ID:${user.uid}`)
-      alert(`se ha registrado ${user.email}`)
+      console.log(`se ha registrado ${user.email} ID:${user.uid}`);
+      alert(`se ha registrado ${user.email}`);
       // Guarda El usuario en Firestore
       createUser({
         id: user.uid,
-        email: user.email
+        email: user.email,
       });
-
     })
     .catch((error) => {
       let errorCode = error.code;
@@ -66,82 +65,93 @@ const signUpUser = (email, password) => {
       console.log(`Error en el sistema (${errorCode}): ${errorMessage}`);
     });
 };
-document.getElementById("register-form").addEventListener("submit", function (event) {
-  event.preventDefault();
-  let email = event.target.elements.email.value;
-  let pass = event.target.elements.pass.value;
-  let pass2 = event.target.elements.pass2.value;
-  pass === pass2 ? signUpUser(email, pass) : alert("Passwords not matching.");
-})
+document
+  .getElementById("register-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    let email = event.target.elements.email.value;
+    let pass = event.target.elements.pass.value;
+    let pass2 = event.target.elements.pass2.value;
+    pass === pass2 ? signUpUser(email, pass) : alert("Passwords not matching.");
+  });
 const signInUser = (email, password) => {
-  firebase.auth().signInWithEmailAndPassword(email, password)
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       // Signed in
       let user = userCredential.user;
-      console.log(`Se ha logado ${user.email} ID:${user.uid}`)
-      alert(`You have logued in: ${user.email}`)
+      console.log(`Se ha logado ${user.email} ID:${user.uid}`);
+      alert(`You have logued in: ${user.email}`);
       console.log("USER", user);
     })
     .catch((error) => {
       let errorCode = error.code;
       let errorMessage = error.message;
-      console.log(errorCode)
-      console.log(errorMessage)
+      console.log(errorCode);
+      console.log(errorMessage);
     });
-}
+};
 const signOut = () => {
   let user = firebase.auth().currentUser;
-  firebase.auth().signOut().then(() => {
-    console.log("Sale del sistema: " + user.email)
-  }).catch((error) => {
-    console.log("Hubo un error: " + error);
+  firebase
+    .auth()
+    .signOut()
+    .then(() => {
+      console.log("Sale del sistema: " + user.email);
+    })
+    .catch((error) => {
+      console.log("Hubo un error: " + error);
+    });
+};
+document
+  .getElementById("login-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    let email = event.target.elements.email2.value;
+    let pass = event.target.elements.pass3.value;
+    signInUser(email, pass);
   });
-}
-document.getElementById("login-form").addEventListener("submit", function (event) {
-  event.preventDefault();
-  let email = event.target.elements.email2.value;
-  let pass = event.target.elements.pass3.value;
-  signInUser(email, pass)
-})
 document.getElementById("logout-button").addEventListener("click", signOut);
 
 // User listener
 // Control logged in user
+let userLoggedIn = "";
 firebase.auth().onAuthStateChanged(function (user) {
-  const userName = document.getElementById('user-list-username');
-  const registerForm = document.getElementById('register-form');
-  const loginForm = document.getElementById('login-form');
-  const logoutButton = document.getElementById('logout-button');
+  const userName = document.getElementById("user-list-username");
+  const registerForm = document.getElementById("register-form");
+  const loginForm = document.getElementById("login-form");
+  const logoutButton = document.getElementById("logout-button");
   if (user) {
+    userLoggedIn = user.email; //Store logged in username
     console.log(`User currently logged in:${user.email} ${user.uid}`);
-    userName.innerHTML = user.email.split('@')[0];
-    registerForm.style.display = 'none';
-    loginForm.style.display = 'none';
-    logoutButton.style.display = 'flex'
+    userName.innerHTML = user.email.split("@")[0];
+    registerForm.style.display = "none";
+    loginForm.style.display = "none";
+    logoutButton.style.display = "flex";
   } else {
     console.log("No user logged in");
     userName.innerHTML = `Login`;
-    registerForm.style.display = 'flex';
-    loginForm.style.display = 'flex';
-    logoutButton.style.display = 'none';
+    registerForm.style.display = "flex";
+    loginForm.style.display = "flex";
+    logoutButton.style.display = "none";
   }
 });
 //#endregion
 
 //#region Login Page ----------------------------------------------------------------------------------------------------
-  const loginPage = document.getElementById('login-section');
-  const loginCloseButton = document.getElementById('close-login-button');
-  loginCloseButton.addEventListener('click', event => {
-    event.preventDefault();
-    loginPage.style.display = "none";
-  })
+const loginPage = document.getElementById("login-section");
+const loginCloseButton = document.getElementById("close-login-button");
+loginCloseButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  loginPage.style.display = "none";
+});
 
-  const loginButton = document.getElementById('user-list-username');
-  loginButton.addEventListener('click', event => {
-    event.preventDefault();
-    loginPage.style.display = 'flex';
-  })
-
+const loginButton = document.getElementById("user-list-username");
+loginButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  loginPage.style.display = "flex";
+});
 
 //#endregion
 
@@ -175,15 +185,16 @@ toggleButton.addEventListener("click", (event) => {
 
 //#region Main Page ----------------------------------------------------------------------------------------------------
 function printMovieCards(moviesData) {
+  console.log(moviesData);
   let movieCardContainerHTML = `<section class="movie-card-container">`;
   moviesData.forEach((movie) => {
     if (movie.poster_path) {
-      movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
+      movieCardContainerHTML += `<section class="movie-card" data-movie-title="${movie.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${movie.poster_path}" data-movie-id="${movie.id}">
                 <img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="Poster Image">
                 <h3 class="dynamic-font-size">${movie.title}</h3>
             </section>`;
     } else {
-      movieCardContainerHTML += `<section class="movie-card" data-movie-id="${movie.id}">
+      movieCardContainerHTML += `<section class="movie-card" data-movie-title="${movie.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${movie.poster_path}" data-movie-id="${movie.id}">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" alt="Poster Image">
                 <h3 class="dynamic-font-size">${movie.title}</h3>
             </section>`;
@@ -245,9 +256,9 @@ async function fetchAndDisplayMovieDetails(id) {
 
       movieDetails.innerHTML = `
         <div id="movie-details-nav">
-            <i id="movie-details-fav" class="fa-solid fa-star"></i>
-            <i id="movie-details-watchlater" class="fa-solid fa-clock"></i>
-            <i id="movie-details-close" class="fa-solid fa-xmark"></i>
+            <i id="movie-details-fav" class="fa-solid fa-star" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
+            <i id="movie-details-watchlater" class="fa-solid fa-clock" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
+            <i id="movie-details-close" class="fa-solid fa-xmark" data-movie-title="${response.title}" data-movie-poster="https://image.tmdb.org/t/p/w500/${response.poster_path}" data-movie-id="${response.id}"></i>
         </div>
         <div id="movie-details-container">
             <div id="movie-details-title">${response.title}</div>
@@ -269,14 +280,32 @@ async function fetchAndDisplayMovieDetails(id) {
       movieDetails.style.backgroundImage = `url(https://image.tmdb.org/t/p/w1280${response.backdrop_path})`;
     })
     .catch((err) => console.error(err));
-  document
-    .getElementById("movie-details-close")
-    .addEventListener("click", (event) => {
-      event.preventDefault();
-      movieDetails.style.removeProperty("display");
-      movieDetails.style.display = "none";
-      movieDetails.innerHTML = ""; //fix youtube video playing in background
-    });
+  //Event listeners for the buttons:
+  const closeButton = document.getElementById("movie-details-close");
+  closeButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    movieDetails.style.removeProperty("display");
+    movieDetails.style.display = "none";
+    movieDetails.innerHTML = ""; //fix youtube video playing in background
+  });
+  const favButton = document.getElementById("movie-details-fav");
+  favButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const title = event.target.getAttribute("data-movie-title");
+    const poster = event.target.getAttribute("data-movie-poster");
+    const id = event.target.getAttribute("data-movie-id");
+    console.log("Favorite details: " + userLoggedIn, title, poster, id);
+    addToFavsUser(userLoggedIn, title, poster, id);
+  });
+  const watchLaterButton = document.getElementById("movie-details-watchlater");
+  watchLaterButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const title = event.target.getAttribute("data-movie-title");
+    const poster = event.target.getAttribute("data-movie-poster");
+    const id = event.target.getAttribute("data-movie-id");
+    console.log("Watchlater details: " + userLoggedIn, title, poster, id);
+    addToWatchlaterUser(userLoggedIn, title, poster, id);
+  });
 }
 async function printMostPopular() {
   await fetch(
@@ -335,7 +364,7 @@ function showSearchFilters() {
   searchFilters.style.display = "flex";
 }
 async function mainPageLoad() {
-  mainSection.innerHTML = '';
+  mainSection.innerHTML = "";
   hideSearchFilters();
   hideDiscoverFilters();
   await printMostPopular();
@@ -345,10 +374,10 @@ async function mainPageLoad() {
   listenForClicks();
 }
 mainPageLoad();
-document.getElementById('home-button').addEventListener('click', event => {
+document.getElementById("home-button").addEventListener("click", (event) => {
   event.preventDefault();
   mainPageLoad();
-})
+});
 //#endregion
 
 //#region Search ----------------------------------------------------------------------------------------------------
@@ -486,7 +515,7 @@ document
         genresButton.innerHTML = "Hide Genres";
       } else {
         genresWindow.style.display = "none";
-        genresButton.innerHTML = 'Select Genres';
+        genresButton.innerHTML = "Select Genres";
       }
     });
   });
@@ -512,40 +541,165 @@ function hideDiscoverFilters() {
 
 async function discovery(customUrl) {
   await fetch(customUrl, options)
-  .then(response => response.json())
-  .then(moviesData => {
-    moviesData = moviesData.results;
-    console.log({'Movies Discovered': moviesData});
-    mainSection.innerHTML = '';
-    printMovieCards(moviesData);
-  })
-  .catch(err => console.error(err));
+    .then((response) => response.json())
+    .then((moviesData) => {
+      moviesData = moviesData.results;
+      console.log({ "Movies Discovered": moviesData });
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+    })
+    .catch((err) => console.error(err));
 }
 
-document.getElementById("discover-submit").addEventListener("click", event => {
+document
+  .getElementById("discover-submit")
+  .addEventListener("click", (event) => {
+    event.preventDefault();
+    console.log(event.target);
+    const genres = Array.from(
+      document.querySelectorAll(
+        "#discover-genres-checkboxes input[type=checkbox]:checked"
+      )
+    )
+      .map((checkbox) => checkbox.value)
+      .join("%2C%20");
+    const year = document.getElementById("year-select").value;
+    const sortBy = document.getElementById("sort-by-select").value;
+
+    console.log("Selected Genres:", genres);
+    console.log("Selected Year:", year);
+    console.log("Selected Sorting Option:", sortBy);
+
+    let customUrl =
+      "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1";
+    if (sortBy) {
+      customUrl += `&sort_by=${sortBy}`;
+    }
+    if (genres) {
+      customUrl += `&with_genres=${genres}`;
+    }
+    if (year) {
+      customUrl += `&year=${year}`;
+    }
+    console.log({ "Custom URL: ": customUrl });
+
+    discovery(customUrl);
+  });
+//#endregion
+
+//#region User Lists
+async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
+  const userUserlistsRef = db.collection("user-lists").doc(userLoggedIn);
+
+  try {
+    const doc = await userUserlistsRef.get();
+
+    if (doc.exists) {
+      // If the document exists, update the favorites array
+      await userUserlistsRef.update({
+        favorites: firebase.firestore.FieldValue.arrayUnion({
+          title: movieTitle,
+          poster_path: moviePoster,
+          id: movieId,
+        }),
+      });
+      console.log("Movie added to favorites");
+    } else {
+      // If the document does not exist, create a new one
+      await userUserlistsRef.set({
+        username: userLoggedIn,
+        favorites: [
+          {
+            title: movieTitle,
+          poster_path: moviePoster,
+          id: movieId,
+          },
+        ],
+        watchlater: [], // Assuming watchlater should be empty initially
+      });
+      console.log("Favorite list created and movie added");
+    }
+  } catch (error) {
+    console.error("Error adding movie to favorites: ", error);
+  }
+}
+async function addToWatchlaterUser(userLoggedIn, movieTitle, moviePoster, movieId) {
+  const userUserlistsRef = db.collection("user-lists").doc(userLoggedIn);
+
+  try {
+    const doc = await userUserlistsRef.get();
+
+    if (doc.exists) {
+      // If the document exists, update the favorites array
+      await userUserlistsRef.update({
+        watchlater: firebase.firestore.FieldValue.arrayUnion({
+          title: movieTitle,
+          poster_path: moviePoster,
+          id: movieId,
+        }),
+      });
+      console.log("Movie added to favorites");
+    } else {
+      // If the document does not exist, create a new one
+      await userUserlistsRef.set({
+        username: userLoggedIn,
+        favorites: [],
+        watchlater: [{
+          title: movieTitle,
+          poster_path: moviePoster,
+          id: movieId,
+        }], // Assuming watchlater should be empty initially
+      });
+      console.log("Favorite list created and movie added");
+    }
+  } catch (error) {
+    console.error("Error adding movie to watch later: ", error);
+  }
+}
+async function favsSection() {
+  mainSection.innerHTML = '';
+  let favoritesMovies = await db.collection("user-lists").doc(userLoggedIn);
+  let favoritesMoviesData = []
+  await favoritesMovies.get().then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", doc.data().favorites);
+        favoritesMoviesData = doc.data().favorites;
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+}).catch((error) => {
+    console.log("Error getting document:", error);
+});
+printMovieCards(favoritesMoviesData);
+console.log(favoritesMoviesData)
+}
+async function watchLaterSection() {
+  mainSection.innerHTML = '';
+  let watchLaterMovies = await db.collection("user-lists").doc(userLoggedIn);
+  let watchLaterMoviesData = []
+  await watchLaterMovies.get().then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", doc.data().watchlater);
+        watchLaterMoviesData = doc.data().watchlater;
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+}).catch((error) => {
+    console.log("Error getting document:", error);
+});
+printMovieCards(watchLaterMoviesData);
+console.log(watchLaterMoviesData)
+}
+
+document.getElementById('favorites').addEventListener('click', event => {
   event.preventDefault();
-  console.log(event.target);
-  const genres = Array.from(document.querySelectorAll('#discover-genres-checkboxes input[type=checkbox]:checked'))
-                      .map(checkbox => checkbox.value).join('%2C%20')
-  const year = document.getElementById('year-select').value;
-  const sortBy = document.getElementById('sort-by-select').value;
-
-  console.log('Selected Genres:', genres);
-  console.log('Selected Year:', year);
-  console.log('Selected Sorting Option:', sortBy);
-
-  let customUrl = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1';
-  if (sortBy) {
-    customUrl += `&sort_by=${sortBy}`;
-  };
-  if (genres) {
-    customUrl += `&with_genres=${genres}`;
-  }
-  if (year) {
-    customUrl += `&year=${year}`;
-  }
-  console.log({'Custom URL: ': customUrl});
-
-  discovery(customUrl);
+  favsSection();
 })
+document.getElementById('watch-later').addEventListener('click', event => {
+  event.preventDefault();
+  watchLaterSection();
+})
+
 //#endregion
