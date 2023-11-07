@@ -125,7 +125,9 @@ firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     userLoggedIn = user.email; //Store logged in username
     console.log(`User currently logged in:${user.email} ${user.uid}`);
-    userName.innerHTML = user.email.split("@")[0];
+    userName.innerHTML = `<li id="user-list-username"><i class="fa-solid fa-user"></i>${
+      user.email.split("@")[0]
+    }</li>`;
     registerForm.style.display = "none";
     loginForm.style.display = "none";
     logoutButton.style.display = "flex";
@@ -168,48 +170,6 @@ const options = {
       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTgwNDUyMzA5OTlmZjEwNWYwODc1NzE3MDdmYmZjNyIsInN1YiI6IjY1MmQ4NTM3MDI0ZWM4MDEzYzU4ZmNjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IxnAafvpj2cajIWF6g3BipJBl3uzCk58CaOmgUUBuxY",
   },
 };
-//#endregion
-
-//#region Mobile nav ----------------------------------------------------------------------------------------------------
-const toggleButton = document.getElementById("toggle-button");
-const dropDownMenu = document.getElementById("dropdown-menu");
-const toggleButtonIcon = document.getElementById("toggle-button-icon");
-
-toggleButton.addEventListener("click", (event) => {
-  dropDownMenu.classList.toggle("open");
-  toggleButtonIcon.classList = dropDownMenu.classList.contains("open")
-    ? "fa-solid fa-xmark"
-    : "fa-solid fa-bars";
-});
-
-const mostPopularButton = document.getElementById('most-popular-button');
-const nowPlayingButton = document.getElementById('now-playing-button');
-const upcomingButton = document.getElementById('upcoming-button');
-
-mostPopularButton.addEventListener('click', event => {
-  event.preventDefault();
-  mainSection.innerHTML = '';
-  hideDiscoverFilters();
-  hideSearchFilters();
-  printMostPopular();
-})
-nowPlayingButton.addEventListener('click', event => {
-  event.preventDefault();
-  mainSection.innerHTML = '';
-  hideDiscoverFilters();
-  hideSearchFilters(); 
-  printNowPlaying();
-})
-upcomingButton.addEventListener('click', event => {
-  event.preventDefault();
-  mainSection.innerHTML = '';
-  hideDiscoverFilters();
-  hideSearchFilters();
-  printUpcoming();
-})
-//#endregion
-
-//#region Main Page ----------------------------------------------------------------------------------------------------
 function printMovieCards(moviesData) {
   console.log(moviesData);
   let movieCardContainerHTML = `<section class="movie-card-container">`;
@@ -243,8 +203,11 @@ function listenForClicks() {
 }
 async function fetchAndDisplayMovieDetails(id) {
   const movieDetails = document.getElementById("movie-details");
+  //Blur main section and background
+  mainSection.style.filter = "blur(2px)";
   //Show details window
-  movieDetails.innerHTML = "";
+  movieDetails.style.backgroundImage = "";
+  movieDetails.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
   movieDetails.style.removeProperty("display");
   movieDetails.style.display = "flex";
 
@@ -307,18 +270,20 @@ async function fetchAndDisplayMovieDetails(id) {
                 </div>
                 `;
       movieDetails.style.backgroundImage = `url(https://image.tmdb.org/t/p/w1280${response.backdrop_path})`;
+      document.getElementById("movie-details-alert").innerHTML = ""; //Hide alert for adding to favs/wl
     })
     .catch((err) => console.error(err));
   //Event listeners for the buttons:
+  //Close Button
   const closeButton = document.getElementById("movie-details-close");
   closeButton.addEventListener("click", (event) => {
     event.preventDefault();
+    mainSection.style.filter = "blur(0px)";
     movieDetails.style.removeProperty("display");
     movieDetails.style.display = "none";
     movieDetails.innerHTML = ""; //fix youtube video playing in background
-    document.getElementById('movie-details-alert').innerHTML = '';
-    // document.getElementById('movie-details-alert').style.display =
   });
+  //Fav Button
   const favButton = document.getElementById("movie-details-fav");
   const favButtonDelete = document.getElementById("movie-details-fav-delete");
   favButton.addEventListener("click", (event) => {
@@ -341,6 +306,7 @@ async function fetchAndDisplayMovieDetails(id) {
     favButton.classList.remove("display-none");
     favButtonDelete.classList.add("display-none");
   });
+  //Watch Later Button
   const watchLaterButton = document.getElementById("movie-details-watchlater");
   const watchLaterButtonDelete = document.getElementById(
     "movie-details-watchlater-delete"
@@ -365,6 +331,48 @@ async function fetchAndDisplayMovieDetails(id) {
     watchLaterButtonDelete.classList.add("display-none");
   });
 }
+//#endregion
+
+//#region Mobile nav ----------------------------------------------------------------------------------------------------
+const toggleButton = document.getElementById("toggle-button");
+const dropDownMenu = document.getElementById("dropdown-menu");
+const toggleButtonIcon = document.getElementById("toggle-button-icon");
+
+toggleButton.addEventListener("click", (event) => {
+  dropDownMenu.classList.toggle("open");
+  toggleButtonIcon.classList = dropDownMenu.classList.contains("open")
+    ? "fa-solid fa-xmark"
+    : "fa-solid fa-bars";
+});
+
+const mostPopularButton = document.getElementById("most-popular-button");
+const nowPlayingButton = document.getElementById("now-playing-button");
+const upcomingButton = document.getElementById("upcoming-button");
+
+mostPopularButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  mainSection.innerHTML = "";
+  hideDiscoverFilters();
+  hideSearchFilters();
+  printMostPopular();
+});
+nowPlayingButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  mainSection.innerHTML = "";
+  hideDiscoverFilters();
+  hideSearchFilters();
+  printNowPlaying();
+});
+upcomingButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  mainSection.innerHTML = "";
+  hideDiscoverFilters();
+  hideSearchFilters();
+  printUpcoming();
+});
+//#endregion
+
+//#region Main Page ----------------------------------------------------------------------------------------------------
 async function printMostPopular() {
   await fetch(
     "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
@@ -423,11 +431,13 @@ function showSearchFilters() {
 }
 async function mainPageLoad() {
   mainSection.innerHTML = "";
+  mainSection.style.display = "none";
   hideSearchFilters();
   hideDiscoverFilters();
   await printMostPopular();
   await printNowPlaying();
   await printUpcoming();
+  mainSection.style.display = "flex";
   //Event listener for clicks on cards
   listenForClicks();
 }
@@ -463,8 +473,34 @@ function sortByPopularityAsc(moviesData) {
     return a.popularity - b.popularity;
   });
 }
+function sortByTitleAsc(moviesData) {
+  moviesData.sort((a, b) => {
+    const titleA = a.title.toUpperCase();
+    const titleB = b.title.toUpperCase();
+    if (titleA < titleB) {
+      return -1; // titleA comes first
+    }
+    if (titleA > titleB) {
+      return 1; // titleB comes first
+    }
+    return 0; // titles are equal
+  });
+}
+function sortByTitleDesc(moviesData) {
+  moviesData.sort((a, b) => {
+    const titleA = a.title.toUpperCase();
+    const titleB = b.title.toUpperCase();
+    if (titleA > titleB) {
+      return -1; // titleB comes first
+    }
+    if (titleA < titleB) {
+      return 1; // titleA comes first
+    }
+    return 0; // titles are equal
+  });
+}
 async function searchMovies(search) {
-  mainSection.innerHTML = "";
+  mainSection.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
   document.getElementById("sort-results").selectedIndex = 0; //Selected Popularity as default each time user searches
   moviesData = [];
   showSearchFilters();
@@ -496,6 +532,7 @@ async function searchMovies(search) {
   //Sort by popularity date by default
   sortByPopularityDesc(moviesData);
   console.log(moviesData);
+  mainSection.innerHTML = "";
   printMovieCards(moviesData);
   listenForClicks();
 }
@@ -534,6 +571,18 @@ sortSelect.addEventListener("change", () => {
 
     case "popularity-asc":
       sortByPopularityAsc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    case "title-asc":
+      sortByTitleAsc(moviesData);
+      mainSection.innerHTML = "";
+      printMovieCards(moviesData);
+      break;
+
+    case "title-desc":
+      sortByTitleDesc(moviesData);
       mainSection.innerHTML = "";
       printMovieCards(moviesData);
       break;
@@ -662,7 +711,9 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         }),
       });
       console.log("Movie added to favorites");
-      document.getElementById("movie-details-alert").innerHTML = `${movieTitle} added to Favorites`;
+      document.getElementById(
+        "movie-details-alert"
+      ).innerHTML = `${movieTitle} added to Favorites`;
     } else {
       // If the document does not exist, create a new one
       await userUserlistsRef.set({
@@ -677,7 +728,6 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         watchlater: [], // Assuming watchlater should be empty initially
       });
       console.log("Favorite list created and movie added");
-    
     }
   } catch (error) {
     console.error("Error adding movie to favorites: ", error);
@@ -701,7 +751,9 @@ async function deleteFromFavsUser(
       }),
     });
     console.log("Movie removed from favorites");
-    document.getElementById("movie-details-alert").innerHTML = `${movieTitle} removed from Favorites`;
+    document.getElementById(
+      "movie-details-alert"
+    ).innerHTML = `${movieTitle} removed from Favorites`;
   } catch (error) {
     console.error("Error removing movie from favorites: ", error);
   }
@@ -727,7 +779,9 @@ async function addToWatchlaterUser(
         }),
       });
       console.log("Movie added to watch later");
-      document.getElementById("movie-details-alert").innerHTML = `${movieTitle} added to Watch Later`;
+      document.getElementById(
+        "movie-details-alert"
+      ).innerHTML = `${movieTitle} added to Watch Later`;
     } else {
       // If the document does not exist, create a new one
       await userUserlistsRef.set({
@@ -762,24 +816,14 @@ async function deleteFromWatchlaterUser(
         id: movieId,
       }),
     });
-    await userUserlistsRef.set({
-      username: userLoggedIn,
-      favorites: [],
-      watchlater: [
-        {
-          title: movieTitle,
-          poster_path: moviePoster,
-          id: movieId,
-        },
-      ],
-    });
-    console.log("Favorite list created and movie added");
-    document.getElementById("movie-details-alert").innerHTML = `${movieTitle} removed from Watch Later`;
+    document.getElementById(
+      "movie-details-alert"
+    ).innerHTML = `${movieTitle} removed from Watch Later`;
   } catch (error) {
     console.error("Error adding movie to watch later: ", error);
   }
 }
-async function favsSection() {
+async function displayFavsSection() {
   mainSection.innerHTML = "";
   let favoritesMovies = await db.collection("user-lists").doc(userLoggedIn);
   let favoritesMoviesData = [];
@@ -797,10 +841,16 @@ async function favsSection() {
     .catch((error) => {
       console.log("Error getting document:", error);
     });
-  printMovieCards(favoritesMoviesData);
+  mainSection.innerHTML += `<span id="favorites-section" class="category-title">Your favorite movies:</span><section class="movie-card-container">`;
+  if (favoritesMoviesData.length != 0) {
+    printMovieCards(favoritesMoviesData);
+  } else {
+    mainSection.innerHTML += `<h2 id="alert">No favorite movies added yet</h2>`;
+  }
+  mainSection.innerHTML += `</section>`;
   console.log(favoritesMoviesData);
 }
-async function watchLaterSection() {
+async function displaywatchLaterSection() {
   mainSection.innerHTML = "";
   let watchLaterMovies = await db.collection("user-lists").doc(userLoggedIn);
   let watchLaterMoviesData = [];
@@ -818,17 +868,27 @@ async function watchLaterSection() {
     .catch((error) => {
       console.log("Error getting document:", error);
     });
-  printMovieCards(watchLaterMoviesData);
+  mainSection.innerHTML += `<span id="most-popular" class="category-title">Movies to watch later:</span><section class="movie-card-container">`;
+  if (watchLaterMoviesData.length != 0) {
+    printMovieCards(watchLaterMoviesData);
+  } else {
+    mainSection.innerHTML += `<h2 id="alert">No movies added to watch later</h2>`;
+  }
+  mainSection.innerHTML += `</section>`;
   console.log(watchLaterMoviesData);
 }
-
+//Navigation buttons to favorites and watch later pages
 document.getElementById("favorites").addEventListener("click", (event) => {
   event.preventDefault();
-  favsSection();
+  hideDiscoverFilters();
+  hideSearchFilters();
+  displayFavsSection();
 });
 document.getElementById("watch-later").addEventListener("click", (event) => {
   event.preventDefault();
-  watchLaterSection();
+  hideDiscoverFilters();
+  hideSearchFilters();
+  displaywatchLaterSection();
 });
 
 //#endregion

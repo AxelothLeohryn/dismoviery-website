@@ -44,7 +44,7 @@
 }
 @keyframes zoomIn {
     0% {
-        transform: scale(110%);
+        transform: scale(150%);
         z-index: 20;
     }
     100% {
@@ -54,11 +54,11 @@
 }
 @keyframes zoomOut {
     0% {
-        transform: scale(100%);
+        transform: scale(50%);
         z-index: 20;
     }
     100% {
-        transform: scale(110%);
+        transform: scale(100%);
         z-index: 1;
     }
 }
@@ -110,13 +110,13 @@ header {
     top: 0px;
     z-index: 5;
     padding: 0 1rem;
-    backdrop-filter: brightness(0.5) blur(10px);
+    backdrop-filter: brightness(0.2) blur(10px);
     box-shadow: 2px 2px 1px black;
 }
 
 nav {
     width: 100%;
-    height: 60px;
+    height: 70px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -180,16 +180,16 @@ button {
 .dropdown-menu {
     position: absolute;
     left: 0px;
-    top: 60px;
+    top: 70px;
     height: 0px;
-    width: 180px;
+    width: 220px;
     z-index: 3;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    background-color: rgba(239, 0, 0, 0.9);
-    backdrop-filter: blur(5px);
+    background-color: rgba(156, 0, 0, 0.99);
+    backdrop-filter: blur(50px);
     box-shadow: 5px 5px 5px black;
     border-bottom-right-radius: 20px;
     transition: height 0.1s ease-in;
@@ -198,7 +198,7 @@ button {
 
 .dropdown-menu.open {
     /* adjust as I add more features to side nav */
-    height: 450px;
+    height: 500px;
 }
 
 ul {
@@ -214,16 +214,22 @@ ul {
 
 li {
     list-style: none;
-    display: block;
+    /* display: block; */
+    cursor: pointer;
     margin: 5px;
     padding: 15px;
     margin-left: 0px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 20px;
 }
 
 li:hover {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 1);
 }
 
 
@@ -231,25 +237,28 @@ li:hover {
 #main-section {
     display: flex;
     flex-direction: column;
-    margin: 20px;
+    margin: 20px 10%;
 }
 
 .movie-card-container {
-    animation: 0.25s ease-out 0s 1 slideInFromBottom;
+    margin: 0;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .movie-card {
-    
+    animation: 0.25s ease-out 0s 1 zoomOut;
     height: 280px;
     width: 150px;
-    margin: 10px;
+    margin: 10px 0px;
     border: 3px solid black;
     border-radius: 10px;
     background-color: black;
-    opacity: 0.8;
+    opacity: 1;
     backdrop-filter: blur(5px);
     overflow: hidden;
     display: flex;
@@ -259,11 +268,12 @@ li:hover {
 }
 
 .movie-card img {
-    animation: 0.75s ease-in-out 0s 1 zoomIn;
+    animation: 0.25s ease-in-out 0s 1 zoomIn;
     width: 100%;
 }
 
 .movie-card h3 {
+    animation: 0.25s ease-out 0s 1 slideInFromBottom;
     color: white;
     margin: 2px;
     margin-top: 8px;
@@ -278,17 +288,22 @@ li:hover {
     color: white;
     font-size: 50px;
     margin-top: 10px;
+    text-shadow: 5px 5px 5px #000000;
 }
 
 /*Movie Details--------------------------------------------------------------------------*/
 #movie-details {
     position: fixed;
     top: 80px;
-    left: 0px;
+    left: 50%;
+    transform: translateX(-52%);
     z-index: 2;
+    width: 90%;
     display: none;
     /*display: none by default, flex when clicked with script*/
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-color: #333333;
     background-size: cover;
     background-position: center;
@@ -297,18 +312,22 @@ li:hover {
     border: 2px solid black;
     border-radius: 20px;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    /* transition: all 1s linear 0s */
 }
 
 #movie-details-alert {
     color: white;
     background-color: black;
+    font-size: 25px !important;
     border-radius: 5px;
     margin: 10px;
     align-items: center;
     text-align: center;
     font-size: larger;
 }
+
 #movie-details-nav {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     gap: 15px;
@@ -357,13 +376,20 @@ li:hover {
     text-shadow: 5px 5px 5px rgba(0, 0, 0, 1);
 }
 
-/* #movie-details-main {
+#movie-details-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-} */
+}
 #movie-details-trailer {
     border-radius: 5px;
     border: 1px solid var(--gray);
     margin: 5px;
+    width: 100%;
+    max-width: 720px;
+    aspect-ratio: 1.78;
 }
 
 #movie-details-overview {
@@ -411,6 +437,7 @@ li:hover {
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+    gap: 20px;
 }
 
 #search-results-text {
@@ -442,6 +469,7 @@ label[for="sort-results"] {
 #discover-filter-options {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: 10px;
 }
 #discover-genres-window {
@@ -478,6 +506,10 @@ input[type="checkbox"] {
     margin-right: 5px;
 }
  /*Login Section--------------------------------------------------------------------------------------------------------*/
+ #logo {
+    width: 200px;
+    border-radius: 50px;
+ }
  #login-section {
     position: fixed;
     display: flex;
@@ -537,9 +569,57 @@ input[type="checkbox"] {
 .display-none {
     display: none;
 }
-/* Desktop */
-/* @media only screen and (min-width: 992px) {
-    .dropdown-menu {
-        display: none;
+.animated {
+    
+}
+
+/* Favorites section -------------------------------------------------------------------------------------------------------- */
+#alert {
+    padding-top: 40px;
+    color: white;
+}
+/* Desktop --------------------------------------------------------------------------------------------------------------- */
+@media only screen and (min-width: 992px) {
+    .movie-card {
+        height: 560px;
+        width: 300px;
+        transition: transform 0.1s linear 0s
     }
-} */
+    .movie-card:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+    }
+    .movie-card h3 {
+        color: white;
+        margin: 2px;
+        margin-top: 20px;
+        font-size: 25px;
+
+    }
+    #movie-details {
+        width: 75%;
+        max-width: 1920px;
+    }
+    #main-section {
+        margin: 20px 10%;
+    }
+    #movie-details-title {
+        font-size: 25px;
+    }
+    #movie-details-main {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+    }
+    #movie-details-overview {
+        font-size: 22px;
+        width: 70%;
+    }
+    #discover-filter-options {
+        gap: 100px;
+    }
+    #discover-genres-checkboxes {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
