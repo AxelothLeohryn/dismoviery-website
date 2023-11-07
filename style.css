@@ -198,7 +198,7 @@ button {
 
 .dropdown-menu.open {
     /* adjust as I add more features to side nav */
-    height: 450px;
+    height: 500px;
 }
 
 ul {
@@ -245,8 +245,9 @@ li:hover {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    gap: 10px;
 }
 
 .movie-card {
@@ -257,7 +258,7 @@ li:hover {
     border: 3px solid black;
     border-radius: 10px;
     background-color: black;
-    opacity: 0.8;
+    opacity: 1;
     backdrop-filter: blur(5px);
     overflow: hidden;
     display: flex;
@@ -433,6 +434,7 @@ li:hover {
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+    gap: 20px;
 }
 
 #search-results-text {
@@ -464,6 +466,7 @@ label[for="sort-results"] {
 #discover-filter-options {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: 10px;
 }
 #discover-genres-window {
@@ -568,7 +571,8 @@ input[type="checkbox"] {
         transition: transform 0.1s linear 0s
     }
     .movie-card:hover {
-        /* box-shadow: 2px 2px 5px #B90504; */
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
     }
     .movie-card h3 {
         color: white;
@@ -596,5 +600,11 @@ input[type="checkbox"] {
     #movie-details-overview {
         font-size: 22px;
         width: 70%;
+    }
+    #discover-filter-options {
+        gap: 100px;
+    }
+    #discover-genres-checkboxes {
+        grid-template-columns: repeat(5, 1fr);
     }
 }
