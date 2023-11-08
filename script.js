@@ -81,15 +81,15 @@ const signInUser = (email, password) => {
     .then((userCredential) => {
       // Signed in
       let user = userCredential.user;
-      console.log(`Se ha logado ${user.email} ID:${user.uid}`);
+      // console.log(`Se ha logado ${user.email} ID:${user.uid}`);
       alert(`You have logued in: ${user.email}`);
-      console.log("USER", user);
+      // console.log("USER", user);
     })
     .catch((error) => {
       let errorCode = error.code;
       let errorMessage = error.message;
-      console.log(errorCode);
-      console.log(errorMessage);
+      // console.log(errorCode);
+      // console.log(errorMessage);
     });
 };
 const signOut = () => {
@@ -124,7 +124,7 @@ firebase.auth().onAuthStateChanged(function (user) {
   const logoutButton = document.getElementById("logout-button");
   if (user) {
     userLoggedIn = user.email; //Store logged in username
-    console.log(`User currently logged in:${user.email} ${user.uid}`);
+    // console.log(`User currently logged in:${user.email} ${user.uid}`);
     userName.innerHTML = `<li id="user-list-username"><i class="fa-solid fa-user"></i>${
       user.email.split("@")[0]
     }</li>`;
@@ -132,7 +132,7 @@ firebase.auth().onAuthStateChanged(function (user) {
     loginForm.style.display = "none";
     logoutButton.style.display = "flex";
   } else {
-    console.log("No user logged in");
+    // console.log("No user logged in");
     userName.innerHTML = `Login`;
     registerForm.style.display = "flex";
     loginForm.style.display = "flex";
@@ -171,7 +171,7 @@ const options = {
   },
 };
 function printMovieCards(moviesData) {
-  console.log(moviesData);
+  // console.log(moviesData);
   let movieCardContainerHTML = `<section class="movie-card-container">`;
   moviesData.forEach((movie) => {
     if (movie.poster_path) {
@@ -195,7 +195,7 @@ function listenForClicks() {
     if (movieCard) {
       const movieId = movieCard.getAttribute("data-movie-id");
       if (movieId) {
-        console.log(movieId);
+        // console.log(movieId);
         await fetchAndDisplayMovieDetails(movieId);
       }
     }
@@ -219,7 +219,7 @@ async function fetchAndDisplayMovieDetails(id) {
     .then((response) => response.json())
     .then((response) => {
       //Get youtube trailer id key
-      console.log(response.results.reverse());
+      // console.log(response.results.reverse());
       response.results.forEach((video) => {
         if (video.type == "Trailer") {
           movieTrailerKey = video.key;
@@ -235,13 +235,13 @@ async function fetchAndDisplayMovieDetails(id) {
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       //Get movie genres
       let movieGenres = "";
       response.genres.forEach(
         (genre) => (movieGenres += `<div class='genre-tag'>${genre.name}</div>`)
       );
-      console.log(movieGenres);
+      // console.log(movieGenres);
 
       movieDetails.innerHTML = `
       <div id="movie-details-alert"></div>
@@ -291,7 +291,7 @@ async function fetchAndDisplayMovieDetails(id) {
     const title = event.target.getAttribute("data-movie-title");
     const poster = event.target.getAttribute("data-movie-poster");
     const id = event.target.getAttribute("data-movie-id");
-    console.log("Favorite details: " + userLoggedIn, title, poster, id);
+    // console.log("Favorite details: " + userLoggedIn, title, poster, id);
     addToFavsUser(userLoggedIn, title, poster, id);
     favButton.classList.add("display-none");
     favButtonDelete.classList.remove("display-none");
@@ -301,7 +301,7 @@ async function fetchAndDisplayMovieDetails(id) {
     const title = event.target.getAttribute("data-movie-title");
     const poster = event.target.getAttribute("data-movie-poster");
     const id = event.target.getAttribute("data-movie-id");
-    console.log("Favorite details: " + userLoggedIn, title, poster, id);
+    // console.log("Favorite details: " + userLoggedIn, title, poster, id);
     deleteFromFavsUser(userLoggedIn, title, poster, id);
     favButton.classList.remove("display-none");
     favButtonDelete.classList.add("display-none");
@@ -316,7 +316,7 @@ async function fetchAndDisplayMovieDetails(id) {
     const title = event.target.getAttribute("data-movie-title");
     const poster = event.target.getAttribute("data-movie-poster");
     const id = event.target.getAttribute("data-movie-id");
-    console.log("Watchlater details: " + userLoggedIn, title, poster, id);
+    // console.log("Watchlater details: " + userLoggedIn, title, poster, id);
     addToWatchlaterUser(userLoggedIn, title, poster, id);
     watchLaterButton.classList.add("display-none");
     watchLaterButtonDelete.classList.remove("display-none");
@@ -380,7 +380,7 @@ async function printMostPopular() {
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       moviesData = response.results;
       mainSection.innerHTML += `<span id="most-popular" class="category-title">Most Popular</span><section class="movie-card-container">`;
       printMovieCards(moviesData);
@@ -395,7 +395,7 @@ async function printNowPlaying() {
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       moviesData = response.results;
       mainSection.innerHTML += `<span id="now-playing" class="category-title">Now Playing</span><section class="movie-card-container">`;
       printMovieCards(moviesData);
@@ -410,7 +410,7 @@ async function printUpcoming() {
   )
     .then((response) => response.json())
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       let moviesData = response.results;
       mainSection.innerHTML += `<span id="upcoming" class="category-title">Upcoming</span><section class="movie-card-container">`;
       printMovieCards(moviesData);
@@ -531,7 +531,7 @@ async function searchMovies(search) {
 
   //Sort by popularity date by default
   sortByPopularityDesc(moviesData);
-  console.log(moviesData);
+  // console.log(moviesData);
   mainSection.innerHTML = "";
   printMovieCards(moviesData);
   listenForClicks();
@@ -541,7 +541,7 @@ async function searchMovies(search) {
 document.getElementById("search-bar").addEventListener("submit", (event) => {
   event.preventDefault();
   const searchValue = document.getElementById("search-box").value;
-  console.log(searchValue);
+  // console.log(searchValue);
   if (searchValue) {
     searchMovies(searchValue);
   } else console.log("Please search something");
@@ -651,7 +651,7 @@ async function discovery(customUrl) {
     .then((response) => response.json())
     .then((moviesData) => {
       moviesData = moviesData.results;
-      console.log({ "Movies Discovered": moviesData });
+      // console.log({ "Movies Discovered": moviesData });
       mainSection.innerHTML = "";
       printMovieCards(moviesData);
     })
@@ -662,7 +662,7 @@ document
   .getElementById("discover-submit")
   .addEventListener("click", (event) => {
     event.preventDefault();
-    console.log(event.target);
+    // console.log(event.target);
     const genres = Array.from(
       document.querySelectorAll(
         "#discover-genres-checkboxes input[type=checkbox]:checked"
@@ -673,9 +673,9 @@ document
     const year = document.getElementById("year-select").value;
     const sortBy = document.getElementById("sort-by-select").value;
 
-    console.log("Selected Genres:", genres);
-    console.log("Selected Year:", year);
-    console.log("Selected Sorting Option:", sortBy);
+    // console.log("Selected Genres:", genres);
+    // console.log("Selected Year:", year);
+    // console.log("Selected Sorting Option:", sortBy);
 
     let customUrl =
       "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1";
@@ -688,7 +688,7 @@ document
     if (year) {
       customUrl += `&year=${year}`;
     }
-    console.log({ "Custom URL: ": customUrl });
+    // console.log({ "Custom URL: ": customUrl });
 
     discovery(customUrl);
   });
@@ -710,7 +710,7 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
           id: movieId,
         }),
       });
-      console.log("Movie added to favorites");
+      // console.log("Movie added to favorites");
       document.getElementById(
         "movie-details-alert"
       ).innerHTML = `${movieTitle} added to Favorites`;
@@ -727,7 +727,7 @@ async function addToFavsUser(userLoggedIn, movieTitle, moviePoster, movieId) {
         ],
         watchlater: [], // Assuming watchlater should be empty initially
       });
-      console.log("Favorite list created and movie added");
+      // console.log("Favorite list created and movie added");
     }
   } catch (error) {
     console.error("Error adding movie to favorites: ", error);
@@ -750,7 +750,7 @@ async function deleteFromFavsUser(
         id: movieId,
       }),
     });
-    console.log("Movie removed from favorites");
+    // console.log("Movie removed from favorites");
     document.getElementById(
       "movie-details-alert"
     ).innerHTML = `${movieTitle} removed from Favorites`;
@@ -778,7 +778,7 @@ async function addToWatchlaterUser(
           id: movieId,
         }),
       });
-      console.log("Movie added to watch later");
+      // console.log("Movie added to watch later");
       document.getElementById(
         "movie-details-alert"
       ).innerHTML = `${movieTitle} added to Watch Later`;
@@ -831,7 +831,7 @@ async function displayFavsSection() {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        console.log("Document data:", doc.data().favorites);
+        // console.log("Document data:", doc.data().favorites);
         favoritesMoviesData = doc.data().favorites;
       } else {
         // doc.data() will be undefined in this case
@@ -848,7 +848,7 @@ async function displayFavsSection() {
     mainSection.innerHTML += `<h2 id="alert">No favorite movies added yet</h2>`;
   }
   mainSection.innerHTML += `</section>`;
-  console.log(favoritesMoviesData);
+  // console.log(favoritesMoviesData);
 }
 async function displaywatchLaterSection() {
   mainSection.innerHTML = "";
@@ -858,7 +858,7 @@ async function displaywatchLaterSection() {
     .get()
     .then((doc) => {
       if (doc.exists) {
-        console.log("Document data:", doc.data().watchlater);
+        // console.log("Document data:", doc.data().watchlater);
         watchLaterMoviesData = doc.data().watchlater;
       } else {
         // doc.data() will be undefined in this case
@@ -875,7 +875,7 @@ async function displaywatchLaterSection() {
     mainSection.innerHTML += `<h2 id="alert">No movies added to watch later</h2>`;
   }
   mainSection.innerHTML += `</section>`;
-  console.log(watchLaterMoviesData);
+  // console.log(watchLaterMoviesData);
 }
 //Navigation buttons to favorites and watch later pages
 document.getElementById("favorites").addEventListener("click", (event) => {

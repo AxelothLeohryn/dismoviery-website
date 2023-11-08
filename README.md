@@ -13,6 +13,10 @@ Dismoviery is a dynamic web application that allows users to search for movies, 
 
 ## Key Features
 
+### Main Page: Most Popular, Playing Now, Upcoming
+The main page features the most interesting lists of movies for the user, available at a quick glance.
+
+![Basic Search](./assets/screenshots/main.png)
 
 ### Basic Search
 Sort and search movies using various criteria.
@@ -33,7 +37,7 @@ Secure login and registration with Firebase Auth.
 
 ### Personalized Lists by user
 Save movies to Favorites or Watch Later lists. 
-
+![Navigation](./assets/screenshots/nav.png)
 ![Personalized Lists by user](./assets/screenshots/favs.png)
 
 ### Movie details
